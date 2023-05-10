@@ -1,13 +1,13 @@
 /*On windows follow this instruction to get a running time:
-  1.clock_t start = clock();
-  2.clock_t stop = clock();
-  3.elapsed = ((double)(stop - start)) / CLOCKS_PER_SEC * 1000.0;
+Â Â 1.clock_t start = clock();
+Â Â 2.clock_t stop = clock();
+Â Â 3.elapsed = ((double)(stop - start)) / CLOCKS_PER_SEC * 1000.0;
  */
 
  /*On Grid follow this instruction to get a running time:
    0. struct timespec begin, end;
    1.clock_gettime(CLOCK_REALTIME, &begin);
-   2.clock_gettime(CLOCK_REALTIME, &end);         
+   2.clock_gettime(CLOCK_REALTIME, &end);    Â Â Â Â Â 
    3.long seconds = end.tv_sec - begin.tv_sec;
    4.long nanoseconds = end.tv_nsec - begin.tv_nsec;
    5.elapsed = (seconds + nanoseconds * 1e-9) * 1000;
