@@ -1,4 +1,5 @@
-/* Comments are added based on the Clique Partitioning (CPA) and 
+/*Implementation of Feder-Motwani algorithm*/
+/* Comments are added based on the Clique Partitioning (CPA) and
 Clique Stripping algorithm (CSA) in Feder and Motwani's paper*/
 
 /*On windows follow this instruction to get a running time:
@@ -7,14 +8,14 @@ Clique Stripping algorithm (CSA) in Feder and Motwani's paper*/
   3.elapsed = ((double)(stop - start)) / CLOCKS_PER_SEC * 1000.0;
  */
 
-/*On Grid follow this instruction to get a running time:
-0. struct timespec begin, end;
-1.clock_gettime(CLOCK_REALTIME, &begin);
-2.clock_gettime(CLOCK_REALTIME, &end);         
-3.long seconds = end.tv_sec - begin.tv_sec;
-4.long nanoseconds = end.tv_nsec - begin.tv_nsec;
-5.elapsed = (seconds + nanoseconds * 1e-9) * 1000;
-*/
+ /*On Grid follow this instruction to get a running time:
+ 0. struct timespec begin, end;
+ 1.clock_gettime(CLOCK_REALTIME, &begin);
+ 2.clock_gettime(CLOCK_REALTIME, &end);         
+ 3.long seconds = end.tv_sec - begin.tv_sec;
+ 4.long nanoseconds = end.tv_nsec - begin.tv_nsec;
+ 5.elapsed = (seconds + nanoseconds * 1e-9) * 1000;
+ */
 
 
 #pragma warning(disable:4996)
@@ -25,7 +26,7 @@ Clique Stripping algorithm (CSA) in Feder and Motwani's paper*/
 #include<math.h>
 #include<time.h>
 #include<stdint.h>
-//#include<direct.h>
+ //#include<direct.h>
 #define MAXCHAR 1000000
 #define N 513
 
@@ -34,19 +35,18 @@ FILE* compression_ratio_ptr;	// Stores compression ratio
 FILE* time_elapsed_ptr;		// Stores execution time
 FILE* file; // Stores the name of the .csv file to read
 FILE* results;	// Stores the results
-FILE* u_file_p;   // Stores Left partitions of the cliques
-FILE* v_file_p;   // Stores right partitions of the cliques
-
+FILE* tempFile;   // temoporary fiwl to store clique edges
+FILE* saveFile;   // saved compressed graph edges
 
 
 int graph_nodes;
 int adj_matrix[N][N];  // Given adjacency matrix
-int adj_matrix_fix[N][N];	
+int adj_matrix_fix[N][N];
 int matrix[(2 * N) - 1][(2 * N) - 1]; // Stores level order of all binary trees
 int num_edges; //final result of m_hat function
-int degree;	
+int degree;
 int heightOfTree;
-float delta = 1;
+float delta;
 int k;	// k_hat
 long long int  c_zero = 0;
 long long int  c_one = 0;
@@ -57,11 +57,16 @@ int	q;	// this is clique number
 int m_hat_fix = 0;	// Initial edges in the given graph
 float compression_ratio;
 char f_name[100];
-double elapsed_time;
+double execution_time;
 struct timespec begin, end;
-
-
-
+int* rightPartitionSize;
+int* leftPartitionSize;
+int* edges;
+int cliqueIndex;
+int clique_u_size;
+int clique_v_size;
+int cliqueEdges = 0;
+char saveFilename[100];
 //function to calculate the height of a binary tree
 int logFunction() {
 	heightOfTree = log2(N);
@@ -95,10 +100,113 @@ void load_adj_matrix() {
 		fclose(file);
 	}
 }
+//to read the input from .mtx file
+void readMatrixMarketFile() {
+	FILE* file = fopen(f_name, "r");
+	if (file == NULL) {
+		printf("Failed to open the file.\n");
+		exit(1);
+	}
+
+	// Read the header information
+	char line[256];
+	fgets(line, sizeof(line), file);
+	if (strncmp(line, "%%MatrixMarket matrix coordinate", 31) != 0) {
+		printf("Invalid Matrix Market file.\n");
+		exit(1);
+	}
+
+	fgets(line, sizeof(line), file);
+	while (line[0] == '%') {
+		fgets(line, sizeof(line), file);
+		//printf("%S", line);
+	}
+
+	// Parse the graph size and number of edges
+	sscanf(line, "%d %d %d \n", &leftPartitionSize, &rightPartitionSize, &edges);
+	int i;
+	// Setting graph nodes as a maximum nodes among left and right partition
+	// We are also initializing the clique index
+	if (leftPartitionSize > rightPartitionSize) {
+		cliqueIndex = (int)leftPartitionSize;
+		graph_nodes = (int)leftPartitionSize;
+	}
+	else {
+		cliqueIndex = (int)rightPartitionSize;
+		graph_nodes = (int)rightPartitionSize;
+	}
+	for (int u = 0; u < graph_nodes + 1; u++) {
+		for (int v = 0; v < graph_nodes + 1; v++) {
+			adj_matrix[u][v] = 0;
+			adj_matrix_fix[u][v] = 0;
+		}
+	}
+	for (i = 0; i < edges; i++) {
+		int row, col;
+		fscanf(file, "%d %d\n", &row, &col); 
+		adj_matrix[row][col] = 1;
+		adj_matrix_fix[row][col] = 1;
+	}
+	fclose(file);
+}
+
+
+
+// Temporarily saving edges of the extracted cliques
+void saveCliquesEdges(int k) {
+	cliqueIndex++;
+	for (int i = 0; i < clique_u_size; i++) {
+		fprintf(tempFile, "%d %d\n", U[k][i], cliqueIndex);
+		cliqueEdges++;
+	}
+	for (int j = 0; j < clique_v_size; j++) {
+		fprintf(tempFile, "%d %d\n", cliqueIndex, K[k][j]);
+		cliqueEdges++;
+	}
+}
+
+// Saving the compressed graph in .mtx format
+void save_graph_to_mtx() {
+
+	// Write the header
+
+	fprintf(saveFile, "%%%%MatrixMarket matrix coordinate pattern general\n");
+	fprintf(saveFile, "%% Compressed graph edges\n");
+	fprintf(saveFile, "%% -------------------------------------------\n");
+	fprintf(saveFile, "%% Original Graph: %s\n", f_name);
+	fprintf(saveFile, "%% Graph_nodes:%d, compression_ratio:%f\n", graph_nodes, compression_ratio);
+	fprintf(saveFile, "%% -------------------------------------------\n");
+	fprintf(saveFile, "%% leftPartitionSize, rightPartitionSize, middlePartitionSize, edges\n");
+	fprintf(saveFile, "%d %d %d %d\n", leftPartitionSize, cliqueIndex - graph_nodes, rightPartitionSize, num_edges);
+	for (int i = 1; i < leftPartitionSize + 1; i++) {
+		for (int j = 1; j < rightPartitionSize + 1; j++) {
+			if (adj_matrix[i][j])
+				fprintf(saveFile, "%d %d\n", i, j);
+		}
+	}
+	tempFile = fopen("tempCliqueEdges.mtx", "r");
+	if (tempFile == NULL) {
+		printf("Failed to open the file.\n");
+		exit(1);
+	}
+
+	// Read the header information
+	char line[256];
+	char ch;
+
+	for (int i = 0; i < cliqueEdges; i++) {
+		int* u, v;
+		fscanf(tempFile, "%d %d \n", &u, &v); 
+		fprintf(saveFile, "%d %d\n", u, v);
+	}
+	fclose(tempFile);
+}
+
+
 
 //function to count number of edges in graph G
 /* Algo CPA step 1 and step 3.3*/
-int m_hat() {
+void m_hat() {
 	int i, j;
 	for (i = 1; i < graph_nodes + 1; i++) {
 		for (j = 1; j < graph_nodes + 1; j++) {
@@ -106,7 +214,6 @@ int m_hat() {
 		}
 	}
 	m_hat_fix = num_edges;
-	return num_edges;
 }
 
 
@@ -452,7 +559,6 @@ void printLastIndex() {
 
 /* Algo CSA */
 void runCliqueStrippingAlgorithm() {
-	//int t = 1;
 	int i, j;
 	int size = 0;
 	int count = 0;
@@ -462,6 +568,7 @@ void runCliqueStrippingAlgorithm() {
 	int sumMatrix;
 	/* Algo CPA: Step 3 */
 	while (k > 1 && num_edges >= pow(graph_nodes, (2 - delta))) {
+
 		sumMatrix = 0;
 		int t = 1;
 		/* Algo CSA: Step 6 */
@@ -473,7 +580,7 @@ void runCliqueStrippingAlgorithm() {
 				for (i = 1; i < graph_nodes + 1; i++) {
 					long double temp = find_ncr((matrix[i][1] - 1), (k - t));
 					c_zero = c_zero + (matrix[i][2 * j]) * temp;
-					c_one = c_one + (matrix[i][(2 * j) + 1]) * temp; 
+					c_one = c_one + (matrix[i][(2 * j) + 1]) * temp;
 				}
 				if (c_zero >= c_one) {
 					c_zero = c_one = 0;
@@ -498,8 +605,8 @@ void runCliqueStrippingAlgorithm() {
 
 			/* Algo CSA: Step 5, Updating neighbourhood trees*/
 			for (i = 1; i < graph_nodes + 1; i++) {
-				matrix[i][l + (graph_nodes - 1)] = 0; 
-				
+				matrix[i][l + (graph_nodes - 1)] = 0;
+
 				for (j = last_index; j > 0; j = (int)floor(j / 2)) {
 					matrix[i][j] = matrix[i][2 * j] + matrix[i][(2 * j) + 1];
 				}
@@ -508,14 +615,6 @@ void runCliqueStrippingAlgorithm() {
 
 			finalArrayIndex[count] = l;
 			count++;
-			//struct Graph* bipartite = createGraph();
-			//for (j = 0; j < count; j++) {
-			//	for (i = 1; i < graph_nodes + 1; i++) {
-			//		if (adj_matrix_fix[i][finalArrayIndex[j]] != 0) {
-			//			addEdge(bipartite, finalArrayIndex[j], i);
-			//		}
-			//	}
-			//}
 			t++;
 			if (sumMatrix == 0)
 				break;
@@ -526,10 +625,9 @@ void runCliqueStrippingAlgorithm() {
 			int p = 0;  // gets the common neighbours of the clique q. p == |U_k|; Size of left partition of the clique
 			for (j = start; j < count; j++) {
 				K[q][j - start] = finalArrayIndex[j];
-				fprintf(v_file_p, "%d,", K[q][j - start]);
 			}
 			K[q][count - start] = -1;
-			fprintf(v_file_p, "\n");
+			clique_v_size = count - start;
 			for (i = 1; i < graph_nodes + 1; i++) {
 				int temp = 0; // get the number of edges of u_i with the selected vertices in the right partition
 				for (j = start; j < count; j++) {
@@ -555,18 +653,20 @@ void runCliqueStrippingAlgorithm() {
 				}
 				if (temp == count - start) {
 					U[q][p] = i;
-					fprintf(u_file_p, "%d,", U[q][p]);
 					p++;
 				}
 
 			}
 			U[q][p] = -1;
-			fprintf(u_file_p, "\n");
+			clique_u_size = p;
 			/* Algo CPA: Step 3.3, updating m_hat */
 			num_edges -= k * p;
 			k = get_k(num_edges);
+			saveCliquesEdges(q);
 			q++;
 			start = count;
+
+
 		}
 		if (sumMatrix == 0)
 			break;
@@ -595,13 +695,14 @@ void get_remaining_edges() {
 	trivial = m_hat_fix - edges;
 	total_edges = num_edges + edge_in_clique;
 	compression_ratio = (float)m_hat_fix / (float)total_edges;
-	//printf("\ncompression_ratio: %f Initial Edges: %d Total Edges: %d Edges Clique: %d Trivial: %d Num_Edges: %d\n", compression_ratio, m_hat_fix, total_edges, edge_in_clique, trivial, num_edges);
+	
 }
 
 void runCliquePartitioningAlgorithm() {
 	struct Graph* graph = createGraph();
 
-	load_adj_matrix();
+	// load_adj_matrix();
+	readMatrixMarketFile();
 	int i, j;
 	for (i = 1; i < graph_nodes + 1; i++) {
 		for (j = 1; j < graph_nodes + 1; j++) {
@@ -610,37 +711,36 @@ void runCliquePartitioningAlgorithm() {
 			}
 		}
 	}
-	 clock_t start = clock();
-	//clock_gettime(CLOCK_REALTIME, &begin);
+	clock_gettime(CLOCK_REALTIME, &begin);
 	m_hat();
+
 	get_k(num_edges);
 	createMatrix();
 	runCliqueStrippingAlgorithm();
-	clock_t stop = clock();
-	//clock_gettime(CLOCK_REALTIME, &end);
-	//long seconds = end.tv_sec - begin.tv_sec;
-	//long nanoseconds = end.tv_nsec - begin.tv_nsec;
-	//elapsed_time = (seconds + nanoseconds * 1e-9) * 1000;
-	elapsed_time = (double)(stop - start) * 1000.0 / CLOCKS_PER_SEC;
-	//printf("Time elapsed for original clique partitioning algorithm in ms: %lf", elapsed_time);
+	clock_gettime(CLOCK_REALTIME, &end);
+	long seconds = end.tv_sec - begin.tv_sec;
+	long nanoseconds = end.tv_nsec - begin.tv_nsec;
+	execution_time = (seconds + nanoseconds * 1e-9) * 1000;
 	get_remaining_edges();
 }
 
-int main(int argc, char* argv[]) { // 
+int main(int argc, char* argv[]) { 
 	char cores[5] = "fm";
 	int nodes = atoi(argv[1]);
-	graph_nodes = nodes; 
+	graph_nodes = nodes;
 	int density = atoi(argv[2]);
 	int exp = atoi(argv[3]);
+	delta = atof(argv[4]);
 	num_edges = 0;
 	q = 0;
-	u_file_p = fopen("FM_left_partition.csv", "w");
-	v_file_p = fopen("FM_right_partition.csv", "w");
-	//printf("____Density: %d _______ Experimtent: %d ______________", density, exp);
-	sprintf(f_name, "New_generated_data/Bipartite_%dX%d/%d/Bipartite_%dX%d_%d_%d.csv", nodes, nodes, density, nodes, nodes, density, exp);
+	sprintf(f_name, "datasets/Bipartite_%dX%d/%d/bipartite_graph_%d_%d_%d.mtx",nodes, nodes, density, nodes, density, exp);
+	sprintf(saveFilename, "datasets/tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, exp, (int)(delta*100));
+	saveFile = fopen(saveFilename, "w");
+	tempFile = fopen("tempCliqueEdges.mtx", "w");
 	runCliquePartitioningAlgorithm();
-	printf("%d,%d,%d,%lf, %lf,%s\n", nodes, density, exp, compression_ratio, elapsed_time, cores);
-	fclose(u_file_p);
-	fclose(v_file_p);
+	fclose(tempFile);
+	printf("%d,%d,%d, %f, %lf, %lf\n", nodes, density, exp, delta, compression_ratio, execution_time);
+	save_graph_to_mtx();
+	fclose(saveFile);
 	return 0;
 }

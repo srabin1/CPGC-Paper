@@ -1,3 +1,4 @@
+/*Implementation of cpgc*/
 /*On windows follow this instruction to get a running time:
   1.clock_t start = clock();
   2.clock_t stop = clock();
@@ -14,6 +15,8 @@
   */
 
 #pragma warning(disable:4996)
+#define _CRT_SECURE_NO_WARNINGS
+
 #include<stdio.h>
 #include<string.h>
 #include<stdbool.h>
@@ -25,14 +28,11 @@
 
 #define MAXCHAR 100000
 #define split true
-FILE* u_file_p;   // Stores Left partitions of the cliques
-FILE* v_file_p;   // Stores right partitions of the cliques
-FILE* trivial_c;  // Stores trivial cliques
 FILE* k_values;   // Stores k_hat values
 FILE* m_hat_values;
 FILE* results;
-
-
+FILE* saveFile;
+FILE* tempFile;
 
 struct timespec begin, end;
 char f_name[100]; // name of the adjacency matrix file
@@ -42,25 +42,52 @@ int experiments[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 float compression_ratio;
 int** adj_matrix;
 int* d_v;  // Degree of vertices in W
-int** K;  // Stores initial selection of vertices from W
-int** U;    // Stores common vertices for right partition
-int** K_split;     // Stores the right partition for each delta-clique
-int** U_split;      // Stores the left partition for each delta-clique
-int* clique_u_size;     // Size of the left partition of the delta-clique
-int* clique_v_size;      // Size of the right partition of the delta-clique
+int* K;  // Stores initial selection of vertices from W
+int* K_split;     // Stores the right partition for each delta-clique
+int* U_split;      // Stores the left partition for each delta-clique
+int clique_u_size;     // Size of the left partition of the delta-clique
+int clique_v_size;      // Size of the right partition of the delta-clique
 int k_split;    // starting index of q in each CPGC iteration
 int k_temp;     // ending index of q in each CPGC iteration
 int m_hat; // number of remaining edges
 int d_K;  // degree of set K in iteration k
 int Gamma;     // # of cliques extracted in each iteration of CPGC
 int k_hat;
-float delta = 1;
+float delta;
 int* temp_psi;  // stores the degrees of vertices w for sorting 
 int* temp_psi_idx;  // stores the sorted indices of degrees of vertices w 
 int initial_edges;
 int total_edges;    // Sum fo edges in delta-clique and trivial edges
 int graph_nodes;
-double run_time;
+double execution_time;
+int* rightPartitionSize;
+int* leftPartitionSize;
+int middlePartitionSize = 0;
+int* tempMiddlePartition;
+int* edges;
+int cliqueIndex; // Starting index of clique vertex
+int edges_in_clique = 0;
+bool saveToFile = true;
+
+// Allocating dynamic memory for 2D array
+int** getAllocate(int n) {
+    int i;
+    int** arr = (int**)malloc((n) * sizeof(int*));
+    for (i = 0; i < n; i++) {
+        arr[i] = (int*)malloc((n) * sizeof(int));
+    }
+    return arr;
+}
+
+// Deallocating dynamic memory for 2D array
+void getDeAllocate(int n, int** arr) {
+    int i;
+    for (i = 0; i < n; i++) {
+        free(arr[i]);
+    }
+    free(arr);
+}
+
 
 
 /* Algo2: CPGC lines 5 and 13 */
@@ -70,8 +97,27 @@ void get_k_hat() {
     k_hat = floor((double)nu / (log2((double)de)));
 }
 
+// To check the format of the given file (csv or mtx)
+int csvFile() {
+    int fileNameLen = strlen(f_name);
+    int targetLen = 3;
+    char fileType[] = "csv";
+    if (fileNameLen < targetLen) {
+        return 0; // Target is longer than the file name, not possible to match
+    }
 
+    for (int i = fileNameLen - targetLen, j = 0; i < fileNameLen; i++, j++) {
+        if (f_name[i] != fileType[j]) {
+            return 0; // Mismatch found, target not found in the last three characters of the file name
+        }
+    }
+
+    return 1; // Target found in the last three characters of the file name
+}
+
+//To read the input from csv file
 void load_adj_matrix() {
+    adj_matrix = getAllocate(graph_nodes);
     FILE* fpointer = fopen(f_name, "r");
     char line[MAXCHAR];
     if (!fpointer)
@@ -93,6 +139,105 @@ void load_adj_matrix() {
         }
         fclose(fpointer);
     }
+}
+
+
+//to read the input from .mtx file
+void readMatrixMarketFile() {
+    FILE* file = fopen(f_name, "r");
+    // Check if the file could be opened
+    if (file == NULL) {
+        printf("Failed to open the file.\n");
+        exit(1);
+    }
+
+    // Read the header information
+    char line[256];
+    fgets(line, sizeof(line), file);
+    if (strncmp(line, "%%MatrixMarket matrix coordinate", 31) != 0) {
+        printf("Invalid Matrix Market file.\n");
+        exit(1);
+    }
+
+    fgets(line, sizeof(line), file);
+    while (line[0] == '%') {
+        fgets(line, sizeof(line), file);
+    }
+
+    // Parse the graph size and number of edges
+    sscanf(line, "%d %d %d \n", &leftPartitionSize, &rightPartitionSize, &edges);
+    int i;
+    // Setting graph nodes as a maximum nodes among left and right partition
+    // We are also initializing the clique index  
+    if (leftPartitionSize > rightPartitionSize) {
+        cliqueIndex = leftPartitionSize;
+        graph_nodes = leftPartitionSize;
+    }
+    else {
+        cliqueIndex = rightPartitionSize;
+        graph_nodes = rightPartitionSize;
+    }
+    // Initializing the dynamic array for adjacency matrix
+    adj_matrix = getAllocate(graph_nodes);
+    for (i = 0; i < edges; i++) {
+        int row, col;
+        fscanf(file, "%d %d \n", &row, &col); 
+        adj_matrix[row - 1][col - 1] = 1;
+    }
+    m_hat = edges;
+    fclose(file);
+}
+
+
+
+// Temporarily saving edges of the extracted cliques
+void saveCliquesEdges() {
+    cliqueIndex++;
+    for (int i = 0; i < clique_u_size; i++) {
+        fprintf(tempFile, "%d %d\n", U_split[i], cliqueIndex);
+    }
+    for (int j = 0; j < clique_v_size; j++) {
+        fprintf(tempFile, "%d %d\n", cliqueIndex, K_split[j]);
+    }
+}
+
+// Saving the compressed graph in .mtx format
+void save_graph_to_mtx() {
+
+    // Write the header
+
+    fprintf(saveFile, "%%%MatrixMarket matrix coordinate pattern general\n");
+    fprintf(saveFile, "%% Compressed graph edges\n");
+    fprintf(saveFile, "%% -------------------------------------------\n");
+    fprintf(saveFile, "%% Original Graph: %s\n", f_name);
+    fprintf(saveFile, "%% Graph_nodes:%d, compression_ratio:%f\n", graph_nodes, compression_ratio);
+    fprintf(saveFile, "%% -------------------------------------------\n");
+    fprintf(saveFile, "%% leftPartitionSize, middlePartitionSize, rightPartitionSize, edges\n");
+    fprintf(saveFile, "%d %d %d %d\n", leftPartitionSize, middlePartitionSize, rightPartitionSize, total_edges);
+    for (int i = 0; i < leftPartitionSize; i++) {
+        for (int j = 0; j < rightPartitionSize; j++) {
+            if (adj_matrix[i][j])
+                fprintf(saveFile, "%d %d\n", i + 1, j + 1);
+        }
+    }
+    tempFile = fopen("datasets/tempCliqueEdges.mtx", "r");
+    if (tempFile == NULL) {
+        printf("Failed to open the file.\n");
+        exit(1);
+    }
+
+    // Read the header information
+    char line[256];
+    char ch;
+
+    while (true) {
+        int u, v;
+        fscanf(tempFile, "%d %d \n", &u, &v); 
+        if (u == -1 || v == -1)
+            break;
+        fprintf(saveFile, "%d %d\n", u, v);
+    }
+    fclose(tempFile);
 }
 
 
@@ -168,13 +313,32 @@ void get_new_K(int k) {
     (void)quicksort(temp_psi, temp_psi_idx, 0, graph_nodes - 1);
 
     i = 0;
+    //printf(" Right Partition \n");
     while (d_v[temp_psi_idx[i]] >= temp_psi[k_hat - 1]) {
-        K[k][i] = temp_psi_idx[i] + 1;
+        K[i] = temp_psi_idx[i] + 1;
+        //printf("%d ", K[k][i]);
         i++;
+
     }
-    K[k][i] = -1; // to define end of selection of vertex v in V
+    K[i] = -1; // to define end of selection of vertex v in V
     d_K = i;
 }
+
+/* Algo3: CSA lines 12 and 13 */
+void get_updates(int d) {
+    //int d;
+    int j, i;
+    for (j = 0; j < clique_v_size; j++) {
+        d_v[K_split[j] - 1] = d_v[K_split[j] - 1] - clique_u_size;
+        m_hat -= clique_u_size;
+        for (i = 0; i < clique_u_size; i++) {
+            adj_matrix[U_split[i] - 1][K_split[j] - 1] = 0;
+        }
+    }
+    edges_in_clique += clique_u_size + clique_v_size;
+}
+
+
 
 /* Algo3: CSA lines 8 to 11 */
 void get_U_with_k_hat(int k) {
@@ -191,33 +355,36 @@ void get_U_with_k_hat(int k) {
 
     for (d = k_split; d < k_temp; d++) {
         for (j = 0; j < set_size; j++) {
-            K_split[d][j] = K[k][j + start];
+            K_split[j] = K[j + start];
         }
-        K_split[d][set_size] = -1;
-        clique_v_size[d] = j;
+        K_split[set_size] = -1;
+        clique_v_size = j;
         start = start + k_hat;
-    }
-
-    /* Algo3: CSA line 10 */
-    for (d = k_split; d < k_temp; d++) {
+        
+        /* Algo3: CSA line 10 */
         int u = 0;
         for (i = 0; i < graph_nodes; i++) {
             int flag = 0;
             for (j = 0; j < k_hat + 1 && !flag; j++) {
-                if (K_split[d][j] != -1) {
-                    if (adj_matrix[i][K_split[d][j] - 1] == 0) {
+                if (K_split[j] != -1) {
+                    if (adj_matrix[i][K_split[j] - 1] == 0) {
                         flag = 1;
                     }
                 }
                 else {
-                    U_split[d][u] = i + 1;
+                    U_split[u] = i + 1;
                     u++;
                     flag = 1;
                 }
             }
-            U_split[d][u] = -1;
+            U_split[u] = -1;
         }
-        clique_u_size[d] = u;
+        clique_u_size = u;
+        get_updates(d);
+        if (saveToFile) {
+            saveCliquesEdges();
+            middlePartitionSize++;
+        }
     }
 }
 
@@ -227,7 +394,10 @@ void get_d_v() {
     for (j = 0; j < graph_nodes; j++) {
         d_v[j] = 0;
         for (i = 0; i < graph_nodes; i++) {
-            d_v[j] = d_v[j] + adj_matrix[i][j];
+            if (adj_matrix[i][j] == 1)
+                d_v[j] = d_v[j] + adj_matrix[i][j];
+            else
+                adj_matrix[i][j] = 0;
         }
     }
 }
@@ -245,19 +415,6 @@ void display_adj_matrix() {
 }
 
 
-/* Algo3: CSA lines 12 and 13 */
-void get_updates() {
-    int d, j, i;
-    for (d = k_split; d < k_temp; d++) {
-        for (j = 0; j < clique_v_size[d]; j++) {
-            d_v[K_split[d][j] - 1] = d_v[K_split[d][j] - 1] - clique_u_size[d];
-            m_hat -= clique_u_size[d];
-            for (i = 0; i < clique_u_size[d]; i++) {
-                adj_matrix[U_split[d][i] - 1][K_split[d][j] - 1] = 0;
-            }
-        }
-    }
-}
 
 /* Calculating compression ratio */
 void get_compression_ratio() {
@@ -265,10 +422,10 @@ void get_compression_ratio() {
     int edges_in_clique = 0;
     int p;
     for (p = 0; p < k_temp; p++) {
-        if (clique_v_size[p] < 2)
-            edges_in_clique += clique_u_size[p];
+        if (clique_v_size < 2)
+            edges_in_clique += clique_u_size;
         else
-            edges_in_clique += clique_u_size[p] + clique_v_size[p];
+            edges_in_clique += clique_u_size + clique_v_size;
     }
     total_edges = m_hat + edges_in_clique;
     compression_ratio = (float)initial_edges / (float)total_edges;
@@ -276,146 +433,98 @@ void get_compression_ratio() {
 
 
 
+
 void sequentialCPA() {
-    load_adj_matrix();
-    //clock_t start = clock();
     clock_gettime(CLOCK_REALTIME, &begin);
+    //clock_t start = clock();
     int k = 0;
     get_d_v();
-    get_edges();
     initial_edges = m_hat;
     get_k_hat();
     int flag = 0;
-
     while (k_hat > 1 && !flag)
     {
         int m = m_hat;
-
         get_new_K(k);
 
         get_U_with_k_hat(k);
-        get_updates();
         get_k_hat();
 
         k++;
         k_split = k_temp;
-        if (m_hat == m) { // k_hat == 1
-            // break;
+        if (m_hat == m) {
             flag = 1;
         }
     }
-    //clock_t stop = clock();
-    clock_gettime(CLOCK_REALTIME, &end);
-    //run_time = ((double)(stop - start)) / CLOCKS_PER_SEC * 1000.0;
 
+
+
+    //clock_t stop = clock();
+    //run_time = ((double)(stop - start)) / CLOCKS_PER_SEC * 1000.0;
+    clock_gettime(CLOCK_REALTIME, &end);
     long seconds = end.tv_sec - begin.tv_sec;
     long nanoseconds = end.tv_nsec - begin.tv_nsec;
-    run_time = (seconds + nanoseconds * 1e-9) * 1000;
+    execution_time = (seconds + nanoseconds * 1e-9) * 1000;
+
     get_compression_ratio();
 }
 
-int** getAllocate(int n) {
-    int i;
-    int** arr = (int**)malloc((n) * sizeof(int*));
-    for (i = 0; i < n; i++) {
-        arr[i] = (int*)malloc((n) * sizeof(int));
-    }
-    return arr;
-}
 
-void getDeAllocate(int n, int** arr) {
-    int i;
-    for (i = 0; i < n; i++) {
-        free(arr[i]);
-    }
-    free(arr);
-}
 
 /* Run on windows without batch script */
-/*
-int main() {
-    char core[5] = "seq";
-    results = fopen("Grid_Sequential_CPA_results.csv", "w");
-    fprintf(results, "nodes,density,experimentNo,compressionRatio,elapsedTime,cores\n");
-    int i = 0;
-    int k = 0;
-    int j = 0;
-    int multiplier;
-    for (i = 9; i < 10; i++) {
-        for (j = 0; j < 1; j++) {
-            for (k = 0; k < 1; k++) {
-                k_temp = 0;
-                k_split = 0;
-                graph_nodes = nodes[i];
-                multiplier = ceil(log10((double)graph_nodes));
-                d_v = (int*)malloc(graph_nodes * sizeof(int));
-                K = getAllocate(multiplier * graph_nodes);
-                U = getAllocate(multiplier * graph_nodes);
-                K_split = getAllocate(multiplier * graph_nodes);
-                U_split = getAllocate(multiplier * graph_nodes);
-                adj_matrix = getAllocate(graph_nodes);
-                clique_u_size = (int*)malloc((multiplier * graph_nodes) * sizeof(int));
-                clique_v_size = (int*)malloc((multiplier * graph_nodes) * sizeof(int));
-                temp_psi = (int*)malloc(graph_nodes * sizeof(int));
-                temp_psi_idx = (int*)malloc(graph_nodes * sizeof(int));
-                printf("____Density: %d _______ Experimtent: %d ______________", density[j], experiments[k]);
-                sprintf(f_name, "New_generated_data/Bipartite_%dX%d/%d/Bipartite_%dX%d_%d_%d.csv", nodes[i], nodes[i], density[j], nodes[i], nodes[i], density[j], experiments[k]);
-                printf("%s \n ", f_name);
-                sequentialCPA();
-                printf("\n*******************END******************* \n\n\n");
-                fprintf(results, "%d, %d, %d, %f, %f,%s\n", nodes[i], density[j], experiments[k], compression_ratio, run_time, core);
-                free(d_v);
-                getDeAllocate(multiplier * graph_nodes, K);
-                getDeAllocate(multiplier * graph_nodes, U);
-                getDeAllocate(multiplier * graph_nodes, K_split);
-                getDeAllocate(multiplier * graph_nodes, U_split);
-                getDeAllocate(graph_nodes, adj_matrix);
-                free(clique_u_size);
-                free(clique_v_size);
-                free(temp_psi);
-                free(temp_psi_idx);
-            }
-        }
-    }
-    fclose(results);
-    return 0;
-}
-*/
-
-
-/* For batch script */
+/* updated main function to read mtx and csv files */
 int main(int argc, char* argv[]) {
-    //char result_file[50];
-    char cores[5] = "seq";
-    int nodes = atoi(argv[1]);
-    int density = atoi(argv[2]);
-    int exp = atoi(argv[3]);
+    if (argc < 5) {
+        printf("Insufficient command-line arguments!\n");
+        return 1;
+    }
+    int nodes;
+    int density;
+    int exp;
+    char cores[] = "cpgc";
     int multiplier;
-    sprintf(f_name, "New_generated_data/Bipartite_%dX%d/%d/Bipartite_%dX%d_%d_%d.csv", nodes, nodes, density, nodes, nodes, density, exp);
+    char saveFilename[50];
+    nodes = atoi(argv[1]);
+    density = atoi(argv[2]);
+    exp = atoi(argv[3]);
+    delta =  atof(argv[4]);
+    sprintf(f_name, "dataset1/bipartite_graph_%d_%d_%d.mtx", nodes, density, exp);
 
-    graph_nodes = nodes;  // nodes
+    if (csvFile())
+        load_adj_matrix();
+    else {
+        readMatrixMarketFile();
+    }
+
+    k_temp = 0;
+    k_split = 0;
+    sprintf(saveFilename, "dataset1/tripartite_graph_%d_%d_%d.mtx", nodes, density, exp);
     multiplier = ceil(log10((double)graph_nodes));
     d_v = (int*)malloc(graph_nodes * sizeof(int));
-    K = getAllocate(multiplier * graph_nodes);
-    U = getAllocate(multiplier * graph_nodes);
-    K_split = getAllocate(multiplier * graph_nodes);
-    U_split = getAllocate(multiplier * graph_nodes);
-    adj_matrix = getAllocate(graph_nodes);
-    clique_u_size = (int*)malloc((multiplier * graph_nodes) * sizeof(int));
-    clique_v_size = (int*)malloc((multiplier * graph_nodes) * sizeof(int));
+    K = (int*)malloc((graph_nodes + 1) * sizeof(int));
+    K_split = (int*)malloc((graph_nodes + 1) * sizeof(int));
+    U_split = (int*)malloc((graph_nodes + 1) * sizeof(int));
+    saveFile = fopen(saveFilename, "w");
+    tempFile = fopen("datasets/tempCliqueEdges.mtx", "w");
     temp_psi = (int*)malloc(graph_nodes * sizeof(int));
     temp_psi_idx = (int*)malloc(graph_nodes * sizeof(int));
     sequentialCPA();
-    printf("%d,%d,%d,%lf, %lf,%s\n", nodes, density, exp, compression_ratio, run_time, cores);
-    free(d_v);
-    getDeAllocate(multiplier * graph_nodes, K);
-    getDeAllocate(multiplier * graph_nodes, U);
-    getDeAllocate(multiplier * graph_nodes, K_split);
-    getDeAllocate(multiplier * graph_nodes, U_split);
+    fprintf(tempFile, "%d", -1);
+    fclose(tempFile);
+    total_edges = m_hat + edges_in_clique;
+    compression_ratio = (float)initial_edges / (float)total_edges;
+    printf("%d, %d, %d, %f, %f, %f\n", graph_nodes, density, exp, delta, compression_ratio, execution_time);
+
+    save_graph_to_mtx();
+
+    free(K);
+
     getDeAllocate(graph_nodes, adj_matrix);
-    free(clique_u_size);
-    free(clique_v_size);
     free(temp_psi);
     free(temp_psi_idx);
+    fclose(saveFile);
+
+    free(d_v);
+    remove("datasets/tempCliqueEdges.mtx");
     return 0;
 }
