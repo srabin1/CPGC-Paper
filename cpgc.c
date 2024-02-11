@@ -488,7 +488,7 @@ int main(int argc, char* argv[]) {
     density = atoi(argv[2]);
     exp = atoi(argv[3]);
     delta =  atof(argv[4]);
-    sprintf(f_name, "dataset1/bipartite_graph_%d_%d_%d.mtx", nodes, density, exp);
+    sprintf(f_name, "datasets/bipartite_graph_%d_%d_%d.mtx", nodes, density, exp);
 
     if (csvFile())
         load_adj_matrix();
@@ -498,7 +498,7 @@ int main(int argc, char* argv[]) {
 
     k_temp = 0;
     k_split = 0;
-    sprintf(saveFilename, "dataset1/tripartite_graph_%d_%d_%d.mtx", nodes, density, exp);
+    sprintf(saveFilename, "datasets/tripartite_graph_%d_%d_%d.mtx", nodes, density, exp);
     multiplier = ceil(log10((double)graph_nodes));
     d_v = (int*)malloc(graph_nodes * sizeof(int));
     K = (int*)malloc((graph_nodes + 1) * sizeof(int));
