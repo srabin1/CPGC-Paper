@@ -21,7 +21,7 @@
 #SBATCH -e errors_%j.err
 # Set maximum time limit
 #SBATCH -t 96:00:00
-cd /wsu/home/gw/gw45/gw4590/Graph_Compression
+#cd /wsu/home/gw/gw45/gw4590/Graph_Compression
 echo nodes,density,exp,delta,compressionRatio,executionTime > cpgc_results.csv 
 echo nodes,total_nodes,density,exp,delta,maximumFlow,run_time,total_run_time > bipartite_dinics_results.csv
 echo nodes,total_nodes,density,exp,delta,maximumFlow,run_time,total_run_time > tripartite_dinics_results.csv
@@ -35,7 +35,7 @@ do
     			do
        				./cpgc  $node $density $exp $delta>> cpgc_results.csv
             			echo $node $density $exp
-				fileName="dataset1/tripartite_graph_${node}_${density}_${exp}.mtx"
+				fileName="datasets/tripartite_graph_${node}_${density}_${exp}.mtx"
 				./dinics_bi  $node $density $exp $delta>> bipartite_dinics_results.csv	
 				./dinics_tri  $node $density $exp $delta>> tripartite_dinics_results.csv
 				rm "$fileName"
