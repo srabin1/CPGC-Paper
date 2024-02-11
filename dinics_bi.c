@@ -268,7 +268,7 @@ int main(int argc, char* argv[]) {
         exp = atoi(argv[3]);
 	delta = atof(argv[4]);
 
-        sprintf(filename, "dataset1/bipartite_graph_%d_%d_%d.mtx", nodes, density, exp);
+        sprintf(filename, "datasets/bipartite_graph_%d_%d_%d.mtx", nodes, density, exp);
         //sprintf(filename, "data3_1/bipartite_graph_%d_%d_%d.mtx", nodes, density, exp);
     }
     clock_gettime(CLOCK_REALTIME, &readingmtx);
