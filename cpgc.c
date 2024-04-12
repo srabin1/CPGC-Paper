@@ -24,9 +24,10 @@
 #include<stdlib.h>
 #include<math.h>
 #include<time.h>
-
+#include <zlib.h>
 
 #define MAXCHAR 100000
+#define CHUNK_SIZE 16384
 #define split true
 FILE* k_values;   // Stores k_hat values
 FILE* m_hat_values;
@@ -68,6 +69,8 @@ int* edges;
 int cliqueIndex; // Starting index of clique vertex
 int edges_in_clique = 0;
 bool saveToFile = true;
+
+
 
 // Allocating dynamic memory for 2D array
 int** getAllocate(int n) {
@@ -188,6 +191,39 @@ void readMatrixMarketFile() {
     fclose(file);
 }
 
+// reading .gz file
+int readAndDecompressGzipFile() {
+    gzFile file;
+    char buffer[CHUNK_SIZE];
+    int bytesRead;
+
+    // Open the gzipped file
+    file = gzopen(f_name, "rb");
+    if (!file) {
+        fprintf(stderr, "Error opening file %s!\n", f_name);
+        return 1;
+    }
+
+    // Read and decompress the file chunk by chunk
+    do {
+        bytesRead = gzread(file, buffer, CHUNK_SIZE);
+        if (bytesRead < 0) {
+            fprintf(stderr, "Error reading from file %s!\n", f_name);
+            gzclose(file);
+            return 1;
+        }
+        // Process the buffer, e.g., write it to another file
+        // Here we just print it to the console
+        fwrite(buffer, 1, bytesRead, stdout);
+    } while (bytesRead > 0);
+
+    // Close the file
+    gzclose(file);
+
+    return 0;
+}
+
+
 
 
 // Temporarily saving edges of the extracted cliques
@@ -206,7 +242,7 @@ void save_graph_to_mtx() {
 
     // Write the header
 
-    fprintf(saveFile, "%%%MatrixMarket matrix coordinate pattern general\n");
+    fprintf(saveFile, "%%MatrixMarket matrix coordinate pattern general\n");
     fprintf(saveFile, "%% Compressed graph edges\n");
     fprintf(saveFile, "%% -------------------------------------------\n");
     fprintf(saveFile, "%% Original Graph: %s\n", f_name);
@@ -488,13 +524,19 @@ int main(int argc, char* argv[]) {
     density = atoi(argv[2]);
     exp = atoi(argv[3]);
     delta =  atof(argv[4]);
-    sprintf(f_name, "datasets/bipartite_graph_%d_%d_%d.mtx", nodes, density, exp);
+    const char* f_name = argv[5];
+    const char *extension = strrchr(f_name, '.');
 
-    if (csvFile())
+        // Compare the extension and call the appropriate function
+    if (strcmp(extension, ".gz") == 0) {
+        return readAndDecompressGzipFile();
+    } else if (csvFile()) {
         load_adj_matrix();
-    else {
+    } else {
         readMatrixMarketFile();
     }
+    // sprintf(f_name, "datasets/bipartite_graph_%d_%d_%d.mtx", nodes, density, exp);
+
 
     k_temp = 0;
     k_split = 0;
