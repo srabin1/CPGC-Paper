@@ -81,9 +81,10 @@
 
 6. To run the Dinics executable files independently use the following steps:
 - generate the fm, cpgc, dinics_bi, and dinics_tri execuitable files by following the steps procedure in the step 2 above
-- executing the `dinics_bi` program needs nodes, density and experiment number as input arguments in respective order
-- executing the `dinics_tri` program needs nodes, density, experiment number, $\delta$, and algorithm (fm or cpgc) as input arguments in respective order
-- ```./dinics_bi 1024 80 1```
+- executing the `dinics_bi` program needs nodes, density and experiment number as input arguments in respective order. For example (```./dinics_bi 1024 80 1```)
+- similarly, executing the `dinics_tri` program needs nodes, density, experiment number, $\delta$, and algorithm (fm or cpgc) as input arguments in respective order
+  - for running `dinics_tri` on a compressed graph generated from cpgc use ```./dinics_tri 1024 80 1 0.9 cpgc```
+  - for running `dinics_tri` on a compressed graph generated from fm use ```./dinics_tri 1024 80 1 0.9 fm```
 
 7. The results for FM and CPGC stored as csv files with names: `fm_results.csv` and `cpgc_results.csv`, respectively. Both outputs includes the following information:  
 a) nodes, i.e., the number of vertices in the left partition of given graph,  
