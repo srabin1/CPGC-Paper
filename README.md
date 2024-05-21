@@ -65,7 +65,8 @@
    c) experimentNo, i.e., the experiment number,  
    d) delta, i.e., the constant δ ($0 < \delta \leq 1$).  
 
-4. To run the FM executable files for multiple experiments through a batch script use the following steps:
+4. To run the FM executable file for multiple experiments through a batch script use the following steps:
+- generate the execuitable file by following the steps procedure in the step 2 above 
 - update the nodes, density and experiment number in the `fmbatchScript.sh` script for the generated datasets and
 - run the following command ```bash fmbatchScript.sh```.
 - this store the resutls in the `fm_results.csv` in the main directory.
