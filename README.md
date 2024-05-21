@@ -1,6 +1,6 @@
-Here's the markdown version of the README file as it appears in the screenshot:
 
-```markdown
+
+
 # ReadMe: A Clique Partitioning-Based Algorithm for Graph Compression
 
 The provided Git repository includes the following:
@@ -49,4 +49,4 @@ The implementation of the algorithms in the paper have been organized as follows
 
 
 
-```
+
