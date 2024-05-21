@@ -101,7 +101,7 @@ a) nodes, i.e., the number of vertices in the left partition of given graph
 b) total_nodes, i.e., the total vertices in the graph, which includes the vertices in source, left partition, middle partition, right partition, and sink,  
 c) density, i.e., the density of the given graph,  
 d) experimentNo, i.e., the experiment number,  
-e) delta, i.e., the constant δ (only for dinics result on compressed graphs),  
+e) delta, i.e., the constant δ (only for dinics result on compressed graphs with dinics_tri execuitable file),  
 f) maximumFlow, i.e., maximum matching in a given graph,  
 g) run_time, i.e., execution time for the Dinitz's algorithm,  
 h) total_run_time, i.e., total execution time including reading the .mtx files.  
