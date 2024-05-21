@@ -65,7 +65,7 @@
    c) experimentNo, i.e., the experiment number,  
    d) delta, i.e., the constant δ ($0 < \delta \leq 1).  
 
-7. To run the FM executable files for multiple experiments through a batch script use the following commands:
+4. To run the FM executable files for multiple experiments through a batch script use the following commands:
 
 8. To run the CPGC and Dinitz algorithms executable files for multiple experiments through a batch script use the following commands:
 
