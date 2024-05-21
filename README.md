@@ -65,7 +65,7 @@
    a) nodes, i.e., the number of vertices in the left partition of given graph,  
    b) density, i.e., the density of the given graph,  
    c) experimentNo, i.e., the experiment number,  
-   d) delta, i.e., the constant δ ($0 < \delta \leq 1$).  
+   d) delta, i.e., the constant $\delta$ ($0 < \delta \leq 1$).  
 
 4. To run the FM executable file for multiple experiments through a batch script use the following steps:
 - generate the fm execuitable file by following the steps procedure in the step 2 above
