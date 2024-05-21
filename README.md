@@ -34,9 +34,9 @@
 
 
 4. The executable files take three arguments in the following sequence:
-a) nodes, i.e., the number of vertices in the left partition of given graph,
-b) density, i.e., the density of the given graph, and
-c) experimentNo, i.e., the experiment number.
+a) nodes, i.e., the number of vertices in the left partition of given graph,  
+b) density, i.e., the density of the given graph, and  
+c) experimentNo, i.e., the experiment number.  
 
 5. Change the path in bash script `simpleGraphGenerator.sh` to the same directory that you are using in your terminal.
 
