@@ -288,7 +288,7 @@ int main(int argc, char* argv[]) {
 
  
 	
-    printf("%d, %d, %d, %d, %f, %d, %f, %f\n", nodes, total_nodes, density, exp, delta, maximumFlow, run_time, total_run_time);
+    printf("%d, %d, %d, %d, %d, %f, %f\n", nodes, total_nodes, density, exp, maximumFlow, run_time, total_run_time);
 
     //printf("Execution Time: %f ms\nTotal execution time: %f ms\n", run_time, total_run_time);
 
