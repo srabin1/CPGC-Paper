@@ -17,9 +17,9 @@
 2. Compile and run FM, CPGC and Dinitz’s algorithms for both bipartite and tripartite graphs.
 
 
-The implementation of the algorithms in the paper have been organized as follows:
+## The implementation of the algorithms in the paper have been organized as follows:
 
-## Folder: datasets
+### Folder: datasets
 
 **Programming Language**: Python  
 **IDE**: Anaconda/Spyder  
