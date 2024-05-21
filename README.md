@@ -19,11 +19,11 @@
 
 ## The implementation of the algorithms in the paper have been organized as follows:
 
-### Folder: datasets
+### Generating datasets
 
 **Programming Language**: Python  
 **Version**: 3 and above
-
+**Folder**: datasets
 1. We generated the original bipartite graphs in Python for instances with |U| = |W| = n number of nodes equal to $2^i$, where i = 5, 6, ..., 15 and having five different densities: p = 0.80, 0.85, 0.90, 0.95, and 0.98.
 
 2. The corresponding code `simpleGraphGenerator.py` in folder `datasets` generates such bipartite graphs.
