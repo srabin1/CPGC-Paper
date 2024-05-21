@@ -3,7 +3,7 @@
 echo nodes,density,exp,delta,compressionRatio,executionTime > cpgc_results.csv 
 echo nodes,total_nodes,density,exp,delta,maximumFlow,run_time,total_run_time > bipartite_dinics_results.csv
 echo nodes,total_nodes,density,exp,delta,maximumFlow,run_time,total_run_time > tripartite_dinics_results.csv
-algorithm = "cpgc"
+algorithm="cpgc"
 for node in  32 64 128 256 512 1024 2048 4096 8192 16384 32768 
 do
     	for density in 80 85 90 95 98 
