@@ -269,7 +269,8 @@ int main(int argc, char* argv[]) {
         density = atoi(argv[2]);
         exp = atoi(argv[3]);
 	delta = atof(argv[4]);
-        sprintf(filename, "datasets/tripartite_graph_%d_%d_%d.mtx", nodes, density, exp);
+	char *algo = argv[5];
+        sprintf(filename, "datasets/%s_tripartite_graph_%d_%d_%d.mtx", algo, nodes, density, exp);
         //sprintf(filename, "data3_1/tripartite_graph_%d_%d_%d.mtx", nodes, density, exp);
     }
     clock_gettime(CLOCK_REALTIME, &readingmtx);
