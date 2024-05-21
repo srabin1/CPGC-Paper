@@ -3,7 +3,7 @@
 
 # ReadMe: A Clique Partitioning-Based Algorithm for Graph Compression
 
-##The provided Git repository includes the following:
+## The provided Git repository includes the following:
 
 - Implementation of both Feder-Motwani (FM) and CPGC algorithm in C `fm.c` and `cpgc.c`, respectively.
 - Implementation of Dinitz's algorithm for both original bipartite and the compressed graph in C `dinics_bi.c` and `dinics_tri.c`, respectively.
