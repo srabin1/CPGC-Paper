@@ -28,8 +28,8 @@
 
 2. The corresponding code `simpleGraphGenerator.py` in folder `datasets` generates such bipartite graphs.
 
-3. To generate a input bipartite graph do the following steps:
-a)  change the terminal current directoy to `datasets` and
+3. To generate a input bipartite graph do the following steps:  
+a)  change the current directoy to `datasets` and
 b)  run the following command ```python3 simpleGraphGenerator.py 32768 98 1```.
 
 5. The executable files take three arguments in the following sequence:  
