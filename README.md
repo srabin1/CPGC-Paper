@@ -51,20 +51,25 @@
 1. We implemented Feder-Motwani (FM) algorithm (`fm.c`), CPGC algorithm (`cpgc.c`), and Dinitz’s algorithm for both original bipartite (`dinics_bi.c`) and compressed graph (`dinics_tri.c`).
 
 2. To compile the FM and CPGC code use the following commands, respectively:
+- change the directory to the main directory (i.e. the main folder of the repo) in the terminal,
+- for compiling FM code use ```gcc fm.c -lm -o fm```
+- for compiling CPGC code use ```gcc cpgc.c -lm cpgc```
 
-3. To compile the Dinitz’s algorithm for both original bipartite and compressed graph use the following commands, respectively:
+3. To run the FM and CPGC code use the following commands, respectively:
+- change the directory to the main directory (i.e. the main folder of the repo) in the terminal,
+- for executing FM code use ```./fm node density experiment delta```
+- for executing CPGC code use ```./cpgc node density experimentNo delta```
+- where, 
+   a) nodes, i.e., the number of vertices in the left partition of given graph,  
+   b) density, i.e., the density of the given graph,  
+   c) experimentNo, i.e., the experiment number,  
+   d) delta, i.e., the constant δ ($0 < \delta \leq 1).  
 
-4. The FM and CPGC algorithms executable files take four arguments in the following sequence:  
-a) nodes, i.e., the number of vertices in the left partition of given graph,  
-b) density, i.e., the density of the given graph,  
-c) experimentNo, i.e., the experiment number,  
-d) delta, i.e., the constant δ ($0 < \delta \leq 1).  
+7. To run the FM executable files for multiple experiments through a batch script use the following commands:
 
-5. To run the FM executable files for multiple experiments through a batch script use the following commands:
+8. To run the CPGC and Dinitz algorithms executable files for multiple experiments through a batch script use the following commands:
 
-6. To run the CPGC and Dinitz algorithms executable files for multiple experiments through a batch script use the following commands:
-
-7. The output for FM and CPGC will be stored as csv files with names: `fm_results.csv` and `cpgc_results.csv`, respectively. Both outputs includes six arguments in the following sequence:  
+9. The output for FM and CPGC will be stored as csv files with names: `fm_results.csv` and `cpgc_results.csv`, respectively. Both outputs includes six arguments in the following sequence:  
 a) nodes, i.e., the number of vertices in the left partition of given graph,  
 b) density, i.e., the density of the given graph,  
 c) experimentNo, i.e., the experiment number,  
@@ -72,7 +77,7 @@ d) delta, i.e., the constant δ,
 e) compression_ratio, i.e., compression ratio of FM or CPGC algorithm, and  
 f) execution_time, i.e., the execution time of FM or CPGC algorithm.  
 
-8. The output for Dinitz’s algorithms will be stored as `bipartite_dinics_results.csv` and `tripartite_dinics_results.csv` while prints eight arguments in the following sequence:  
+10. The output for Dinitz’s algorithms will be stored as `bipartite_dinics_results.csv` and `tripartite_dinics_results.csv` while prints eight arguments in the following sequence:  
 a) nodes, i.e., the number of vertices in the left partition of given graph  
 b) total_nodes, i.e., the total vertices in the graph, which includes the vertices in source, left partition, middle partition, right partition, and sink,  
 c) density, i.e., the density of the given graph,  
