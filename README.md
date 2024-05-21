@@ -30,7 +30,7 @@
 
 2. The corresponding code `simpleGraphGenerator.py` in folder `datasets` generates such bipartite graphs.
 
-3. To compile the Python code first change your terminal directory to `datasets` then use the following command:
+3. To compile the Python code first change your terminal directory to `datasets` then use the following command:  
 ```python3 simpleGraphGenerator.py 2048 98 1```.
 
 4. The executable files take three arguments in the following sequence:  
