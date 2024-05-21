@@ -43,7 +43,7 @@
 - run the following command ```bash simpleGraphGenerator.sh```
 - this will generate the requested input bipartite graphs in the current `dataset` directory.
 
-
+### Executing the C programs
 **Programming Language**: C  
 **Compiler**: gnu  
 **Version**: tested with version 7 and 9
