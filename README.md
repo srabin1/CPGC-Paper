@@ -34,15 +34,17 @@
 ``` python simpleGraphGenerator.py 2048 98 1 ```.
 
 4. The executable files take three arguments in the following sequence:  
-a) nodes, i.e., the number of vertices in the left partition of given graph (eg. 2048), 
+a) nodes, i.e., the number of vertices in the left partition of given graph (eg. 2048),
+
 b) density, i.e., the density of the given graph (eg. 98), and  
+
 c) experimentNo, i.e., the experiment number (eg. 1).  
 
-5. Change the path in bash script `simpleGraphGenerator.sh` to the same directory that you are using in your terminal.
+6. Change the path in bash script `simpleGraphGenerator.sh` to the same directory that you are using in your terminal.
 
-6. To run the python code use the following command:
+7. To run the python code use the following command:
 
-7. The result will be stored in folder `datasets` with the following format:
+8. The result will be stored in folder `datasets` with the following format:
 `bipartite_graph_nodes_density_experimentNo.mtx`
 
 **Programming Language**: C  
