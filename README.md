@@ -41,7 +41,7 @@
 - updatet nodes, density and experiment number in the `simpleGraphGenerator.sh` bash file as required
 - change the current directoy to `datasets` and
 - run the following command ```bash simpleGraphGenerator.sh```
-- this will generate the requested input bipartite graphs in the current `dataset` directory.
+- this will generate the requested input bipartite graphs in the current `datasets` directory.
 
 ### Executing the C programs
 **Programming Language**: C  
