@@ -31,24 +31,22 @@
 3. To generate a input bipartite graph do the following steps:  
 -  change the current directoy to `datasets` and
 -  run the `simpleGraphGenerator.py` python file, it takes three arguments in the following sequence:
-   -  nodes, i.e., the number of vertices in the left partition of given graph (eg. 32768),  
+   - nodes, i.e., the number of vertices in the left partition of given graph (eg. 32768),  
    - density, i.e., the density of the given graph (eg. 98), and  
-   -  experimentNo, i.e., the experiment number (eg. 1).  
--  run the following command ```python3 simpleGraphGenerator.py 32768 98 1```.
+   - experimentNo, i.e., the experiment number (eg. 1).  
+-  run the following command ```python3 simpleGraphGenerator.py 32768 98 1```,
+-  it will generate `bipartite_graph_nodes_density_experimentNo.mtx` bipartite graph in the current `dataset` directory. 
 
-5. The executable files take three arguments in the following sequence:  
+4. T0 generate multiple input bipartite graphs do the following steps:
+- updatet number of vertices, dnesity and experiment number in the `simpleGraphGenerator.sh` bash file as required
+- change the current directoy to `datasets` and
+- run the following command ```bash simpleGraphGenerator.sh```
+- this will generate the requested input bipartite graphs in the current `dataset` directory.
 
-
-6. Change the path in bash script `simpleGraphGenerator.sh` to the same directory that you are using in your terminal.
-
-7. To run the python code use the following command:
-
-8. The result will be stored in folder `datasets` with the following format:
-`bipartite_graph_nodes_density_experimentNo.mtx`
 
 **Programming Language**: C  
 **Compiler**: gnu  
-**Version**: 7 or 9
+**Version**: tested with version 7 and 9
 
 1. We implemented Feder-Motwani (FM) algorithm (`fm.c`), CPGC algorithm (`cpgc.c`), and Dinitz’s algorithm for both original bipartite (`dinics_bi.c`) and compressed graph (`dinics_tri.c`).
 
@@ -56,11 +54,11 @@
 
 3. To compile the Dinitz’s algorithm for both original bipartite and compressed graph use the following commands, respectively:
 
-4. The FM, CPGC and Dinitz’s algorithm executable files take four arguments in the following sequence:  
+4. The FM and CPGC algorithms executable files take four arguments in the following sequence:  
 a) nodes, i.e., the number of vertices in the left partition of given graph,  
 b) density, i.e., the density of the given graph,  
 c) experimentNo, i.e., the experiment number,  
-d) delta, i.e., the constant δ.  
+d) delta, i.e., the constant δ ($0 < \delta \leq 1).  
 
 5. To run the FM executable files for multiple experiments through a batch script use the following commands:
 
