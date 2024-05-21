@@ -13,7 +13,7 @@
 
 **Note**: To test the above algorithms’ code, run them in the following order:
 
-1. Run the `simpleGraphGenerator.py` code via its batch script `simpleGraphGenerator.sh` to generate bipartite graphs and use them as inputs for FM (`fm.c`), CPGC (`cpgc.c`), and Dinitz's algorithm (`dinics_bi.c`) code.
+1. Run the `simpleGraphGenerator.py` code via its batch script `simpleGraphGenerator.sh` to generate bipartite graphs and use them as inputs for FM (`fm.c`), CPGC (`cpgc.c`), and Dinitz's algorithm (`dinics_bi.c` and `dinics_tri.c`) code.
 2. Compile and run FM, CPGC and Dinitz’s algorithms for both bipartite and tripartite graphs.
 
 
@@ -98,7 +98,9 @@ g) run_time, i.e., execution time for the Dinitz's algorithm,
 h) total_run_time, i.e., total execution time including reading the .mtx files.  
 
 
-
+### Discussion and Limitations:
+- The obtained compression ratio depends on the number of nodes, density and $\delta$, which determines the size of the right partition of the $\delta$-clique.
+- The FM algorithm computes a large number to select the vertices for the right parition of a $\delta$-clique. This number increasing with increasing nodes in each partition of the graph and thus exceeds the machines capaticy to store this number. Therefore, the FM program is limited to compress graphs with upto 128 vertices in each partition. 
 
 
 
