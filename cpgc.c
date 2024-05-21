@@ -498,7 +498,8 @@ int main(int argc, char* argv[]) {
 
     k_temp = 0;
     k_split = 0;
-    sprintf(saveFilename, "datasets/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, exp, int(delta);
+    //sprintf(saveFilename, "datasets/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, exp, int(delta);
+    sprintf(saveFilename, "datasets/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, exp, (int)(delta*100));
     multiplier = ceil(log10((double)graph_nodes));
     d_v = (int*)malloc(graph_nodes * sizeof(int));
     K = (int*)malloc((graph_nodes + 1) * sizeof(int));
