@@ -733,7 +733,7 @@ int main(int argc, char* argv[]) {
 	delta = atof(argv[4]);
 	num_edges = 0;
 	q = 0;
-	sprintf(f_name, "datasets/bipartite_graph_%d_%d_%d.mtx",nodes, nodes, density, nodes, density, exp);
+	sprintf(f_name, "datasets/bipartite_graph_%d_%d_%d.mtx", nodes, density, exp);
 	sprintf(saveFilename, "datasets/fm_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, exp, (int)(delta*100));
 	saveFile = fopen(saveFilename, "w");
 	tempFile = fopen("tempCliqueEdges.mtx", "w");
