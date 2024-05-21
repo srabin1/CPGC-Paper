@@ -14,10 +14,10 @@ do
     			do
        				./cpgc  $node $density $exp $delta>> cpgc_results.csv
             			echo $node $density $exp
-				fileName="datasets/tripartite_graph_${node}_${density}_${exp}.mtx"
+				#fileName="datasets/cpgc_tripartite_graph_${node}_${density}_${exp}.mtx"
 				./dinics_bi  $node $density $exp $delta >> bipartite_dinics_results.csv	
 				./dinics_tri  $node $density $exp $delta $algorithm >> tripartite_dinics_results.csv
-				rm "$fileName"
+				#rm "$fileName"
 	       		done
         	done
     	done
