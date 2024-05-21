@@ -79,7 +79,13 @@
 - run the following command ```bash cpgcbatchScript.sh```
 - this store the cpgc resutls in the `cpgc_results.csv` in the main directory and dinics_bi and dinics_tri in `bipartite_dinics_results.csv` and `tripartite_dinics_results.csv`, respectively.
 
-6. The results for FM and CPGC stored as csv files with names: `fm_results.csv` and `cpgc_results.csv`, respectively. Both outputs includes the following information:  
+6. To run the Dinics executable files independently use the following steps:
+- generate the fm, cpgc, dinics_bi, and dinics_tri execuitable files by following the steps procedure in the step 2 above
+- executing the `dinics_bi` program needs nodes, density and experiment number as input arguments in respective order
+- executing the `dinics_tri` program needs nodes, density, experiment number, $\delta$, and algorithm (fm or cpgc) as input arguments in respective order
+- ```./dinics_bi 1024 80 1```
+
+7. The results for FM and CPGC stored as csv files with names: `fm_results.csv` and `cpgc_results.csv`, respectively. Both outputs includes the following information:  
 a) nodes, i.e., the number of vertices in the left partition of given graph,  
 b) density, i.e., the density of the given graph,  
 c) experimentNo, i.e., the experiment number,  
@@ -87,7 +93,7 @@ d) delta, i.e., the constant $\delta$,
 e) compression_ratio, i.e., compression ratio of FM or CPGC algorithm, and  
 f) execution_time, i.e., the execution time of FM or CPGC algorithm.  
 
-7. The output for Dinitz’s algorithms stored as `bipartite_dinics_results.csv` and `tripartite_dinics_results.csv` includes the following information:  
+8. The output for Dinitz’s algorithms stored as `bipartite_dinics_results.csv` and `tripartite_dinics_results.csv` includes the following information:  
 a) nodes, i.e., the number of vertices in the left partition of given graph  
 b) total_nodes, i.e., the total vertices in the graph, which includes the vertices in source, left partition, middle partition, right partition, and sink,  
 c) density, i.e., the density of the given graph,  
