@@ -261,12 +261,12 @@ int main(int argc, char* argv[]) {
     int nodes;
     int density;
     int exp;
-    float delta;
+    float delta = 1.0;
     if (argc > 1) {
         nodes = atoi(argv[1]);
         density = atoi(argv[2]);
         exp = atoi(argv[3]);
-	delta = atof(argv[4]);
+	//delta = atof(argv[4]);
 
         sprintf(filename, "datasets/bipartite_graph_%d_%d_%d.mtx", nodes, density, exp);
         //sprintf(filename, "data3_1/bipartite_graph_%d_%d_%d.mtx", nodes, density, exp);
