@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /your current directory/Graph_Compression/
+
 echo "nodes,density,exp,delta,compression_ratio,execution_time" 
 for node in  32 64 128 
 do
