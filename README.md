@@ -34,8 +34,7 @@
 ``` python simpleGraphGenerator.py 2048 98 1 ```.
 
 4. The executable files take three arguments in the following sequence:
-   a)  nodes
-   a)  nodes, i.e., the number of vertices in the left partition of given graph (eg. 2048),
+   a)  nodes, i.e., the number of vertices in the left partition of given graph (eg. 2048),  
    b)  density, i.e., the density of the given graph (eg. 98), and  
    c)  experimentNo, i.e., the experiment number (eg. 1).  
 
