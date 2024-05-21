@@ -109,7 +109,7 @@ h) total_run_time, i.e., total execution time including reading the .mtx files.
 
 ### Discussion and Limitations:
 - The obtained compression ratio depends on the number of nodes, density and $\delta$, which determines the size of the right partition of the $\delta$-clique.
-- The FM algorithm computes a large number to select the vertices for the right parition of a $\delta$-clique. This number increasing with increasing nodes in each partition of the graph and thus exceeds the machines capaticy to store this number. Therefore, the FM program is limited to compress graphs with upto 128 vertices in each partition. 
+- The FM algorithm computes a large number to select the vertices for the right parition of a $\delta$-clique. This number increases with increasing nodes in each partition of the graph and thus exceeds the machines capaticy to store this number. Therefore, the FM program is limited to compress graphs with upto 128 vertices in each partition. 
 
 
 
