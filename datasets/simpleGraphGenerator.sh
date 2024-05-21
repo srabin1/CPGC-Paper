@@ -1,3 +1,4 @@
+#!/bin/bash
 #echo "nodes,density,experimentNo"
 
 for node in   32 64 128 256 512 1024 2048 4096 8192 16384 32768
