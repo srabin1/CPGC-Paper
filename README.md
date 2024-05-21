@@ -38,7 +38,7 @@
 -  it will generate `bipartite_graph_nodes_density_experimentNo.mtx` bipartite graph in the current `dataset` directory. 
 
 4. T0 generate multiple input bipartite graphs do the following steps:
-- updatet number of vertices, dnesity and experiment number in the `simpleGraphGenerator.sh` bash file as required
+- updatet nodes, density and experiment number in the `simpleGraphGenerator.sh` bash file as required
 - change the current directoy to `datasets` and
 - run the following command ```bash simpleGraphGenerator.sh```
 - this will generate the requested input bipartite graphs in the current `dataset` directory.
@@ -65,7 +65,11 @@
    c) experimentNo, i.e., the experiment number,  
    d) delta, i.e., the constant δ ($0 < \delta \leq 1$).  
 
-4. To run the FM executable files for multiple experiments through a batch script use the following commands:
+4. To run the FM executable files for multiple experiments through a batch script use the following steps:
+- update the nodes, density and experiment number in the `fmbatchScript.sh` script for the generated datasets and
+- run the following command ```bash fmbatchScript.sh```.
+- this store the resutls in the `fm_results.csv` in the main directory.
+
 
 8. To run the CPGC and Dinitz algorithms executable files for multiple experiments through a batch script use the following commands:
 
