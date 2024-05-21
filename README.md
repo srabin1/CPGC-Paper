@@ -22,17 +22,17 @@
 ### Folder: datasets
 
 **Programming Language**: Python  
-**IDE**: Anaconda/Spyder  
-**Version**: 5.1.5
+**Version**: 3 and above
 
 1. We generated the original bipartite graphs in Python for instances with |U| = |W| = n number of nodes equal to $2^i$, where i = 5, 6, ..., 15 and having five different densities: p = 0.80, 0.85, 0.90, 0.95, and 0.98.
 
 2. The corresponding code `simpleGraphGenerator.py` in folder `datasets` generates such bipartite graphs.
 
-3. To compile the Python code first change your terminal directory to `datasets` then use the following command:  
-```python3 simpleGraphGenerator.py 32768 98 1```.
+3. To generate a input bipartite graph do the following steps:
+a)  change the terminal current directoy to `datasets` and
+b)  run the following command ```python3 simpleGraphGenerator.py 32768 98 1```.
 
-4. The executable files take three arguments in the following sequence:  
+5. The executable files take three arguments in the following sequence:  
    a)  nodes, i.e., the number of vertices in the left partition of given graph (eg. 32768),  
    b)  density, i.e., the density of the given graph (eg. 98), and  
    c)  experimentNo, i.e., the experiment number (eg. 1).  
