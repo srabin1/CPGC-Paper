@@ -69,13 +69,15 @@
 
 4. To run the FM executable file for multiple experiments through a batch script use the following steps:
 - generate the fm execuitable file by following the steps procedure in the step 2 above
-- update the nodes, density and experiment number in the `fmbatchScript.sh` script for the generated datasets
+- update the for loops on nodes, density, and experiment number in the `fmbatchScript.sh` script for the generated datasets
+- update the for loop on delta in the `fmbatchScript.sh` script as required to vary the obtained compression ratio
 - run the following command ```bash fmbatchScript.sh```
 - this store the fm resutls in the `fm_results.csv` in the main directory
 
 5. To run the CPGC and Dinics executable files for multiple experiments through a batch script use the following steps:
 - generate the cpgc, dinics_bi, and dinics_tri execuitable files by following the steps procedure in the step 2 above
-- update the for loops on nodes, density, experiment number, and delta in the `cpgcbatchScript.sh` script for the generated datasets
+- update the for loops on nodes, density, and experiment number in the `cpgcbatchScript.sh` script for the generated datasets
+- update the for loop on delta in the `fmbatchScript.sh` script as required to vary the obtained compression ratio
 - run the following command ```bash cpgcbatchScript.sh```
 - this store the cpgc resutls in the `cpgc_results.csv` in the main directory and dinics_bi and dinics_tri in `bipartite_dinics_results.csv` and `tripartite_dinics_results.csv`, respectively.
 
