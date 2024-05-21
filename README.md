@@ -34,7 +34,7 @@
 
 
 4. The executable files take three arguments in the following sequence:
-1)  nodes, i.e., the number of vertices in the left partition of given graph,
+'1)' nodes, i.e., the number of vertices in the left partition of given graph,
 2) density, i.e., the density of the given graph, and
 3) experimentNo, i.e., the experiment number.
 
