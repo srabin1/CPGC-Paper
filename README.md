@@ -34,7 +34,6 @@ b) run the `simpleGraphGenerator.py` python file, it takes three arguments in th
    i)  nodes, i.e., the number of vertices in the left partition of given graph (eg. 32768),  
    ii)  density, i.e., the density of the given graph (eg. 98), and  
    iii)  experimentNo, i.e., the experiment number (eg. 1).  
-
 c)  run the following command ```python3 simpleGraphGenerator.py 32768 98 1```.
 
 5. The executable files take three arguments in the following sequence:  
