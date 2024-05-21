@@ -33,7 +33,7 @@
 3. To compile the Python code first change your terminal directory to `datasets` then use the following command:
 
 
-4. The executable files take three arguments in the following sequence:
+4. The executable files take three arguments in the following sequence:  
 a) nodes, i.e., the number of vertices in the left partition of given graph,  
 b) density, i.e., the density of the given graph, and  
 c) experimentNo, i.e., the experiment number.  
@@ -55,33 +55,33 @@ c) experimentNo, i.e., the experiment number.
 
 3. To compile the Dinitz’s algorithm for both original bipartite and compressed graph use the following commands, respectively:
 
-4. The FM, CPGC and Dinitz’s algorithm executable files take four arguments in the following sequence:
-a) nodes, i.e., the number of vertices in the left partition of given graph,
-b) density, i.e., the density of the given graph,
-c) experimentNo, i.e., the experiment number,
-d) delta, i.e., the constant δ.
+4. The FM, CPGC and Dinitz’s algorithm executable files take four arguments in the following sequence:  
+a) nodes, i.e., the number of vertices in the left partition of given graph,  
+b) density, i.e., the density of the given graph,  
+c) experimentNo, i.e., the experiment number,  
+d) delta, i.e., the constant δ.  
 
 5. To run the FM executable files for multiple experiments through a batch script use the following commands:
 
 6. To run the CPGC and Dinitz algorithms executable files for multiple experiments through a batch script use the following commands:
 
-7. The output for FM and CPGC will be stored as csv files with names: `fm_results.csv` and `cpgc_results.csv`, respectively. Both outputs includes six arguments in the following sequence:
-a) nodes, i.e., the number of vertices in the left partition of given graph,
-b) density, i.e., the density of the given graph,
-c) experimentNo, i.e., the experiment number,
-d) delta, i.e., the constant δ,
-e) compression_ratio, i.e., compression ratio of FM or CPGC algorithm, and
-f) execution_time, i.e., the execution time of FM or CPGC algorithm.
+7. The output for FM and CPGC will be stored as csv files with names: `fm_results.csv` and `cpgc_results.csv`, respectively. Both outputs includes six arguments in the following sequence:  
+a) nodes, i.e., the number of vertices in the left partition of given graph,  
+b) density, i.e., the density of the given graph,  
+c) experimentNo, i.e., the experiment number,  
+d) delta, i.e., the constant δ,  
+e) compression_ratio, i.e., compression ratio of FM or CPGC algorithm, and  
+f) execution_time, i.e., the execution time of FM or CPGC algorithm.  
 
-8. The output for Dinitz’s algorithms will be stored as `bipartite_dinics_results.csv` and `tripartite_dinics_results.csv` while prints eight arguments in the following sequence:
-a) nodes, i.e., the number of vertices in the left partition of given graph
-b) total_nodes, i.e., the total vertices in the graph, which includes the vertices in source, left partition, middle partition, right partition, and sink,
-c) density, i.e., the density of the given graph,
-d) experimentNo, i.e., the experiment number,
-e) delta, i.e., the constant δ,
-f) maximumFlow, i.e., maximum matching in a given graph,
-g) run_time, i.e., execution time for the Dinitz's algorithm,
-h) total_run_time, i.e., total execution time including reading the .mtx files.
+8. The output for Dinitz’s algorithms will be stored as `bipartite_dinics_results.csv` and `tripartite_dinics_results.csv` while prints eight arguments in the following sequence:  
+a) nodes, i.e., the number of vertices in the left partition of given graph  
+b) total_nodes, i.e., the total vertices in the graph, which includes the vertices in source, left partition, middle partition, right partition, and sink,  
+c) density, i.e., the density of the given graph,  
+d) experimentNo, i.e., the experiment number,  
+e) delta, i.e., the constant δ,  
+f) maximumFlow, i.e., maximum matching in a given graph,  
+g) run_time, i.e., execution time for the Dinitz's algorithm,  
+h) total_run_time, i.e., total execution time including reading the .mtx files.  
 
 
 
