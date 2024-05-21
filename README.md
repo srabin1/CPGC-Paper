@@ -57,8 +57,8 @@
 
 3. To run the FM and CPGC code use the following commands, respectively:
 - change the directory to the main directory (i.e. the main folder of the repo) in the terminal,
-- for executing FM code use ```./fm node density experiment delta```
-- for executing CPGC code use ```./cpgc node density experimentNo delta```
+- for executing FM code use ```./fm nodes density experiment delta```
+- for executing CPGC code use ```./cpgc nodes density experimentNo delta```
 - where, 
    a) nodes, i.e., the number of vertices in the left partition of given graph,  
    b) density, i.e., the density of the given graph,  
