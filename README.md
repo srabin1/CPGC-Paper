@@ -71,24 +71,23 @@
 - generate the fm execuitable file by following the steps procedure in the step 2 above
 - update the nodes, density and experiment number in the `fmbatchScript.sh` script for the generated datasets
 - run the following command ```bash fmbatchScript.sh```
-- this store the resutls in the `fm_results.csv` in the main directory
-
+- this store the fm resutls in the `fm_results.csv` in the main directory
 
 5. To run the CPGC and Dinics executable files for multiple experiments through a batch script use the following steps:
 - generate the cpgc, dinics_bi, and dinics_tri execuitable files by following the steps procedure in the step 2 above
 - update the nodes, density and experiment number in the `cpgcbatchScript.sh` script for the generated datasets
 - run the following command ```bash cpgcbatchScript.sh```
-- this store the resutls in the `cpgc_results.csv` in the main directory
+- this store the cpgc resutls in the `cpgc_results.csv` in the main directory and dinics_bi and dinics_tri in `bipartite_dinics_results.csv` and `tripartite_dinics_results.csv`, respectively.
 
-9. The output for FM and CPGC will be stored as csv files with names: `fm_results.csv` and `cpgc_results.csv`, respectively. Both outputs includes six arguments in the following sequence:  
+6. The results for FM and CPGC stored as csv files with names: `fm_results.csv` and `cpgc_results.csv`, respectively. Both outputs includes the following information:  
 a) nodes, i.e., the number of vertices in the left partition of given graph,  
 b) density, i.e., the density of the given graph,  
 c) experimentNo, i.e., the experiment number,  
-d) delta, i.e., the constant δ,  
+d) delta, i.e., the constant $\delta$,  
 e) compression_ratio, i.e., compression ratio of FM or CPGC algorithm, and  
 f) execution_time, i.e., the execution time of FM or CPGC algorithm.  
 
-10. The output for Dinitz’s algorithms will be stored as `bipartite_dinics_results.csv` and `tripartite_dinics_results.csv` while prints eight arguments in the following sequence:  
+7. The output for Dinitz’s algorithms stored as `bipartite_dinics_results.csv` and `tripartite_dinics_results.csv` includes the following information:  
 a) nodes, i.e., the number of vertices in the left partition of given graph  
 b) total_nodes, i.e., the total vertices in the graph, which includes the vertices in source, left partition, middle partition, right partition, and sink,  
 c) density, i.e., the density of the given graph,  
