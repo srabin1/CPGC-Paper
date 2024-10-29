@@ -1,6 +1,6 @@
 #!/bin/bash
-cd /your current directory/Graph_Compression/
-echo "nodes,density,exp,delta,compression_ratio,execution_time" 
+
+echo "nodes,density,exp,delta,compression_ratio,execution_time"  > fm_results.csv
 for node in  32 64 128 
 do
     	for density in 80 85 90 95 98 
