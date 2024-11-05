@@ -527,7 +527,7 @@ int main(int argc, char* argv[]) {
     const char* f_name = argv[5];
     const char *extension = strrchr(f_name, '.');
 
-        // Compare the extension and call the appropriate function
+    sprintf(f_name, "/ocean/projects/cis230093p/srabin/Graph_Compression/datasets/bipartite_graph_%d_%d_%d.mtx", nodes, density, exp);
     if (strcmp(extension, ".gz") == 0) {
         return readAndDecompressGzipFile();
     } else if (csvFile()) {
@@ -535,20 +535,20 @@ int main(int argc, char* argv[]) {
     } else {
         readMatrixMarketFile();
     }
-    // sprintf(f_name, "datasets/bipartite_graph_%d_%d_%d.mtx", nodes, density, exp);
+    
 
 
     k_temp = 0;
     k_split = 0;
     //sprintf(saveFilename, "datasets/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, exp, int(delta);
-    sprintf(saveFilename, "dataset1/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, exp, (int)(delta*100));
+    sprintf(saveFilename, "/ocean/projects/cis230093p/achavan/Graph_Compression/dataset/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, exp, (int)(delta*100));
     multiplier = ceil(log10((double)graph_nodes));
     d_v = (int*)malloc(graph_nodes * sizeof(int));
     K = (int*)malloc((graph_nodes + 1) * sizeof(int));
     K_split = (int*)malloc((graph_nodes + 1) * sizeof(int));
     U_split = (int*)malloc((graph_nodes + 1) * sizeof(int));
     saveFile = fopen(saveFilename, "w");
-    tempFile = fopen("dataset1/tempCliqueEdges.mtx", "w");
+    tempFile = fopen("/ocean/projects/cis230093p/achavan/Graph_Compression/dataset/tempCliqueEdges.mtx", "w");
     temp_psi = (int*)malloc(graph_nodes * sizeof(int));
     temp_psi_idx = (int*)malloc(graph_nodes * sizeof(int));
     sequentialCPA();
@@ -568,6 +568,6 @@ int main(int argc, char* argv[]) {
     fclose(saveFile);
 
     free(d_v);
-    remove("dataset1/tempCliqueEdges.mtx");
+    remove("/ocean/projects/cis230093p/achavan/Graph_Compression/dataset/tempCliqueEdges.mtx");
     return 0;
 }
