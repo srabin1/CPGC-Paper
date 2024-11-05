@@ -256,7 +256,7 @@ void save_graph_to_mtx() {
                 fprintf(saveFile, "%d %d\n", i + 1, j + 1);
         }
     }
-    tempFile = fopen("datasets/tempCliqueEdges.mtx", "r");
+    tempFile = fopen("dataset1/tempCliqueEdges.mtx", "r");
     if (tempFile == NULL) {
         printf("Failed to open the file.\n");
         exit(1);
@@ -541,14 +541,14 @@ int main(int argc, char* argv[]) {
     k_temp = 0;
     k_split = 0;
     //sprintf(saveFilename, "datasets/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, exp, int(delta);
-    sprintf(saveFilename, "datasets/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, exp, (int)(delta*100));
+    sprintf(saveFilename, "dataset1/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, exp, (int)(delta*100));
     multiplier = ceil(log10((double)graph_nodes));
     d_v = (int*)malloc(graph_nodes * sizeof(int));
     K = (int*)malloc((graph_nodes + 1) * sizeof(int));
     K_split = (int*)malloc((graph_nodes + 1) * sizeof(int));
     U_split = (int*)malloc((graph_nodes + 1) * sizeof(int));
     saveFile = fopen(saveFilename, "w");
-    tempFile = fopen("datasets/tempCliqueEdges.mtx", "w");
+    tempFile = fopen("dataset1/tempCliqueEdges.mtx", "w");
     temp_psi = (int*)malloc(graph_nodes * sizeof(int));
     temp_psi_idx = (int*)malloc(graph_nodes * sizeof(int));
     sequentialCPA();
@@ -568,6 +568,6 @@ int main(int argc, char* argv[]) {
     fclose(saveFile);
 
     free(d_v);
-    remove("datasets/tempCliqueEdges.mtx");
+    remove("dataset1/tempCliqueEdges.mtx");
     return 0;
 }
