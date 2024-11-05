@@ -524,18 +524,19 @@ int main(int argc, char* argv[]) {
     density = atoi(argv[2]);
     exp = atoi(argv[3]);
     delta =  atof(argv[4]);
-    const char* f_name = argv[5];
-    const char *extension = strrchr(f_name, '.');
+    // const char* f_name = argv[5];
+    // const char *extension = strrchr(f_name, '.');
 
     sprintf(f_name, "/ocean/projects/cis230093p/srabin/Graph_Compression/datasets/bipartite_graph_%d_%d_%d.mtx", nodes, density, exp);
-    if (strcmp(extension, ".gz") == 0) {
-        return readAndDecompressGzipFile();
-    } else if (csvFile()) {
-        load_adj_matrix();
-    } else {
-        readMatrixMarketFile();
-    }
+    // if (strcmp(extension, ".gz") == 0) {
+    //     return readAndDecompressGzipFile();
+    // } else if (csvFile()) {
+    //     load_adj_matrix();
+    // } else {
+    //     readMatrixMarketFile();
+    // }
     
+    readMatrixMarketFile();
 
 
     k_temp = 0;
