@@ -37,9 +37,6 @@ FILE* tempFile;
 
 struct timespec begin, end;
 char f_name[100]; // name of the adjacency matrix file
-int nodes[] = { 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384 };
-int density[] = { 80, 85, 90, 95, 98 };
-int experiments[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 float compression_ratio;
 int** adj_matrix;
 int* d_v;  // Degree of vertices in W
@@ -55,6 +52,13 @@ int d_K;  // degree of set K in iteration k
 int Gamma;     // # of cliques extracted in each iteration of CPGC
 int k_hat;
 float delta;
+int density;
+int nodes;
+
+char cores[] = "cpgc";
+int multiplier;
+char saveFilename[150];
+int experiment_no;
 int* temp_psi;  // stores the degrees of vertices w for sorting 
 int* temp_psi_idx;  // stores the sorted indices of degrees of vertices w 
 int initial_edges;
@@ -192,36 +196,36 @@ void readMatrixMarketFile() {
 }
 
 // reading .gz file
-int readAndDecompressGzipFile() {
-    gzFile file;
-    char buffer[CHUNK_SIZE];
-    int bytesRead;
+// int readAndDecompressGzipFile() {
+//     gzFile file;
+//     char buffer[CHUNK_SIZE];
+//     int bytesRead;
 
-    // Open the gzipped file
-    file = gzopen(f_name, "rb");
-    if (!file) {
-        fprintf(stderr, "Error opening file %s!\n", f_name);
-        return 1;
-    }
+//     // Open the gzipped file
+//     file = gzopen(f_name, "rb");
+//     if (!file) {
+//         fprintf(stderr, "Error opening file %s!\n", f_name);
+//         return 1;
+//     }
 
-    // Read and decompress the file chunk by chunk
-    do {
-        bytesRead = gzread(file, buffer, CHUNK_SIZE);
-        if (bytesRead < 0) {
-            fprintf(stderr, "Error reading from file %s!\n", f_name);
-            gzclose(file);
-            return 1;
-        }
-        // Process the buffer, e.g., write it to another file
-        // Here we just print it to the console
-        fwrite(buffer, 1, bytesRead, stdout);
-    } while (bytesRead > 0);
+//     // Read and decompress the file chunk by chunk
+//     do {
+//         bytesRead = gzread(file, buffer, CHUNK_SIZE);
+//         if (bytesRead < 0) {
+//             fprintf(stderr, "Error reading from file %s!\n", f_name);
+//             gzclose(file);
+//             return 1;
+//         }
+//         // Process the buffer, e.g., write it to another file
+//         // Here we just print it to the console
+//         fwrite(buffer, 1, bytesRead, stdout);
+//     } while (bytesRead > 0);
 
-    // Close the file
-    gzclose(file);
+//     // Close the file
+//     gzclose(file);
 
-    return 0;
-}
+//     return 0;
+// }
 
 
 
@@ -464,6 +468,7 @@ void get_compression_ratio() {
             edges_in_clique += clique_u_size + clique_v_size;
     }
     total_edges = m_hat + edges_in_clique;
+    printf("471 %d, %d, %d, %d\n", initial_edges, total_edges, m_hat , edges_in_clique);
     compression_ratio = (float)initial_edges / (float)total_edges;
 }
 
@@ -501,8 +506,8 @@ void sequentialCPA() {
     long seconds = end.tv_sec - begin.tv_sec;
     long nanoseconds = end.tv_nsec - begin.tv_nsec;
     execution_time = (seconds + nanoseconds * 1e-9) * 1000;
-
-    get_compression_ratio();
+    printf("509 %d, %d, %d, %d\n", initial_edges, total_edges, m_hat , edges_in_clique);
+    // get_compression_ratio();
 }
 
 
@@ -514,20 +519,17 @@ int main(int argc, char* argv[]) {
         printf("Insufficient command-line arguments!\n");
         return 1;
     }
-    int nodes;
-    int density;
-    int exp;
-    char cores[] = "cpgc";
-    int multiplier;
-    char saveFilename[50];
+
     nodes = atoi(argv[1]);
     density = atoi(argv[2]);
-    exp = atoi(argv[3]);
+    experiment_no = atoi(argv[3]);
     delta =  atof(argv[4]);
     // const char* f_name = argv[5];
-    // const char *extension = strrchr(f_name, '.');
-
-    sprintf(f_name, "/ocean/projects/cis230093p/srabin/Graph_Compression/datasets/bipartite_graph_%d_%d_%d.mtx", nodes, density, exp);
+    printf("%d, %d, %d, %f, %f, %f\n", graph_nodes, density, experiment_no, delta, compression_ratio, execution_time);
+    sprintf(f_name, "/ocean/projects/cis230093p/srabin/Graph_Compression/dataset1/bipartite_graph_%d_%d_%d.mtx", nodes, density, experiment_no);
+    const char *extension = strrchr(f_name, '.');
+    
+    
     // if (strcmp(extension, ".gz") == 0) {
     //     return readAndDecompressGzipFile();
     // } else if (csvFile()) {
@@ -541,13 +543,15 @@ int main(int argc, char* argv[]) {
 
     k_temp = 0;
     k_split = 0;
-    //sprintf(saveFilename, "datasets/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, exp, int(delta);
-    sprintf(saveFilename, "/ocean/projects/cis230093p/achavan/Graph_Compression/dataset/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, exp, (int)(delta*100));
+    //sprintf(saveFilename, "datasets/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, experiment_no, int(delta);
+    sprintf(saveFilename, "/ocean/projects/cis230093p/achavan/Graph_Compression/dataset/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, experiment_no, (int)(delta*100));
+    printf("%d, %d, %d, %f, %f, %f, %s\n", graph_nodes, density, experiment_no, delta, compression_ratio, execution_time, saveFilename);
     multiplier = ceil(log10((double)graph_nodes));
     d_v = (int*)malloc(graph_nodes * sizeof(int));
     K = (int*)malloc((graph_nodes + 1) * sizeof(int));
     K_split = (int*)malloc((graph_nodes + 1) * sizeof(int));
     U_split = (int*)malloc((graph_nodes + 1) * sizeof(int));
+    printf("%d, %d, %d, %f, %f, %f\n", graph_nodes, density, experiment_no, delta, compression_ratio, execution_time);
     saveFile = fopen(saveFilename, "w");
     tempFile = fopen("/ocean/projects/cis230093p/achavan/Graph_Compression/dataset/tempCliqueEdges.mtx", "w");
     temp_psi = (int*)malloc(graph_nodes * sizeof(int));
@@ -556,8 +560,9 @@ int main(int argc, char* argv[]) {
     fprintf(tempFile, "%d", -1);
     fclose(tempFile);
     total_edges = m_hat + edges_in_clique;
+    printf("563 %d, %d, %d, %d\n", initial_edges, total_edges, m_hat , edges_in_clique);
     compression_ratio = (float)initial_edges / (float)total_edges;
-    printf("%d, %d, %d, %f, %f, %f\n", graph_nodes, density, exp, delta, compression_ratio, execution_time);
+    printf("%d, %d, %d, %f, %f, %f\n", graph_nodes, density, experiment_no, delta, compression_ratio, execution_time);
 
     save_graph_to_mtx();
 
