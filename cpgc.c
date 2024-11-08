@@ -276,6 +276,9 @@ void save_graph_to_mtx() {
                 fprintf(saveFile, "%d %d\n", i + 1, j + 1);
         }
     }
+
+    // Update the directory path as required
+    // tempFile = fopen("datasets/tempCliqueEdges.mtx", "r");
     tempFile = fopen("datasets/tempCliqueEdges.mtx", "r");
     if (tempFile == NULL) {
         printf("Failed to open the file 265 .\n");
@@ -538,6 +541,7 @@ int main(int argc, char* argv[]) {
     density = atoi(argv[2]);
     experiment_no = atoi(argv[3]);
     delta =  atof(argv[4]);
+    // Update the directory path as required
     // sprintf(f_name, "/ocean/projects/cis230093p/srabin/Graph_Compression/dataset1/bipartite_graph_%d_%d_%d.mtx", nodes, density, experiment_no);
     sprintf(f_name, "datasets/bipartite_graph_%d_%d_%d.mtx", nodes, density, experiment_no);
     const char *extension = strrchr(f_name, '.');
@@ -555,6 +559,7 @@ int main(int argc, char* argv[]) {
 
     k_temp = 0;
     k_split = 0;
+    // Update the directory path as required
     sprintf(saveFilename, "datasets/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, experiment_no, (int) delta);
     // sprintf(saveFilename, "/ocean/projects/cis230093p/achavan/Graph_Compression/dataset/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, experiment_no, (int)(delta*100));
     multiplier = ceil(log10((double)graph_nodes));
@@ -564,6 +569,7 @@ int main(int argc, char* argv[]) {
     U_split = (int*)malloc((graph_nodes + 1) * sizeof(int));
     // printf("%d, %d, %d, %f, %f, %f\n", graph_nodes, density, experiment_no, delta, compression_ratio, execution_time);
     saveFile = fopen(saveFilename, "w");
+    // Update the directory path as required
     // tempFile = fopen("/ocean/projects/cis230093p/achavan/Graph_Compression/dataset/tempCliqueEdges.mtx", "w");
     tempFile = fopen("datasets/tempCliqueEdges.mtx", "w");
     temp_psi = (int*)malloc(graph_nodes * sizeof(int));
@@ -583,6 +589,7 @@ int main(int argc, char* argv[]) {
     fclose(saveFile);
 
     free(d_v);
+    // Update the directory path as required
     // remove("/ocean/projects/cis230093p/achavan/Graph_Compression/dataset/tempCliqueEdges.mtx");
     remove("datasets/tempCliqueEdges.mtx");
     return 0;
