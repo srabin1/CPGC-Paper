@@ -1,4 +1,11 @@
 /*Implementation of cpgc*/
+
+/* 
+
+Use:  gcc cpgc.c -lm -o cpgc -O1 -lrt -lz for compilation. Change the optimization level as required.
+
+*/
+
 /*On windows follow this instruction to get a running time:
   1.clock_t start = clock();
   2.clock_t stop = clock();
@@ -13,6 +20,16 @@
    4.long nanoseconds = end.tv_nsec - begin.tv_nsec;
    5.elapsed = (seconds + nanoseconds * 1e-9) * 1000;
   */
+
+/*
+
+for Segmentation Fault Error Please Check the following variable paths:
+1: f_name
+2: saveFile 
+3: tempFile in Function save_graph_to_mtx()
+
+
+*/
 
 #pragma warning(disable:4996)
 #define _CRT_SECURE_NO_WARNINGS
@@ -36,7 +53,7 @@ FILE* saveFile;
 FILE* tempFile;
 
 struct timespec begin, end;
-char f_name[100]; // name of the adjacency matrix file
+char f_name[150]; // name of the adjacency matrix file
 float compression_ratio;
 int** adj_matrix;
 int* d_v;  // Degree of vertices in W
@@ -196,36 +213,36 @@ void readMatrixMarketFile() {
 }
 
 // reading .gz file
-// int readAndDecompressGzipFile() {
-//     gzFile file;
-//     char buffer[CHUNK_SIZE];
-//     int bytesRead;
+int readAndDecompressGzipFile() {
+    gzFile file;
+    char buffer[CHUNK_SIZE];
+    int bytesRead;
 
-//     // Open the gzipped file
-//     file = gzopen(f_name, "rb");
-//     if (!file) {
-//         fprintf(stderr, "Error opening file %s!\n", f_name);
-//         return 1;
-//     }
+    // Open the gzipped file
+    file = gzopen(f_name, "rb");
+    if (!file) {
+        fprintf(stderr, "Error opening file %s!\n", f_name);
+        return 1;
+    }
 
-//     // Read and decompress the file chunk by chunk
-//     do {
-//         bytesRead = gzread(file, buffer, CHUNK_SIZE);
-//         if (bytesRead < 0) {
-//             fprintf(stderr, "Error reading from file %s!\n", f_name);
-//             gzclose(file);
-//             return 1;
-//         }
-//         // Process the buffer, e.g., write it to another file
-//         // Here we just print it to the console
-//         fwrite(buffer, 1, bytesRead, stdout);
-//     } while (bytesRead > 0);
+    // Read and decompress the file chunk by chunk
+    do {
+        bytesRead = gzread(file, buffer, CHUNK_SIZE);
+        if (bytesRead < 0) {
+            fprintf(stderr, "Error reading from file %s!\n", f_name);
+            gzclose(file);
+            return 1;
+        }
+        // Process the buffer, e.g., write it to another file
+        // Here we just print it to the console
+        fwrite(buffer, 1, bytesRead, stdout);
+    } while (bytesRead > 0);
 
-//     // Close the file
-//     gzclose(file);
+    // Close the file
+    gzclose(file);
 
-//     return 0;
-// }
+    return 0;
+}
 
 
 
@@ -521,21 +538,19 @@ int main(int argc, char* argv[]) {
     density = atoi(argv[2]);
     experiment_no = atoi(argv[3]);
     delta =  atof(argv[4]);
-    // const char* f_name = argv[5];
     // sprintf(f_name, "/ocean/projects/cis230093p/srabin/Graph_Compression/dataset1/bipartite_graph_%d_%d_%d.mtx", nodes, density, experiment_no);
     sprintf(f_name, "datasets/bipartite_graph_%d_%d_%d.mtx", nodes, density, experiment_no);
-    // const char *extension = strrchr(f_name, '.');
+    const char *extension = strrchr(f_name, '.');
     
     
-    // if (strcmp(extension, ".gz") == 0) {
-    //     return readAndDecompressGzipFile();
-    // } else if (csvFile()) {
-    //     load_adj_matrix();
-    // } else {
-    //     readMatrixMarketFile();
-    // }
-    
-    readMatrixMarketFile();
+    if (strcmp(extension, ".gz") == 0) {
+        return readAndDecompressGzipFile();
+    } else if (csvFile()) {
+        load_adj_matrix();
+    } else {
+        readMatrixMarketFile();
+    }
+
 
 
     k_temp = 0;
@@ -569,7 +584,6 @@ int main(int argc, char* argv[]) {
 
     free(d_v);
     // remove("/ocean/projects/cis230093p/achavan/Graph_Compression/dataset/tempCliqueEdges.mtx");
-    
     remove("datasets/tempCliqueEdges.mtx");
     return 0;
 }
