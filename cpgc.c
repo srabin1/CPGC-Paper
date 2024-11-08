@@ -243,9 +243,7 @@ void saveCliquesEdges() {
 
 // Saving the compressed graph in .mtx format
 void save_graph_to_mtx() {
-
     // Write the header
-
     fprintf(saveFile, "%%MatrixMarket matrix coordinate pattern general\n");
     fprintf(saveFile, "%% Compressed graph edges\n");
     fprintf(saveFile, "%% -------------------------------------------\n");
@@ -254,22 +252,23 @@ void save_graph_to_mtx() {
     fprintf(saveFile, "%% -------------------------------------------\n");
     fprintf(saveFile, "%% leftPartitionSize, middlePartitionSize, rightPartitionSize, edges\n");
     fprintf(saveFile, "%d %d %d %d\n", leftPartitionSize, middlePartitionSize, rightPartitionSize, total_edges);
+    
     for (int i = 0; i < leftPartitionSize; i++) {
         for (int j = 0; j < rightPartitionSize; j++) {
             if (adj_matrix[i][j])
                 fprintf(saveFile, "%d %d\n", i + 1, j + 1);
         }
     }
-    tempFile = fopen("dataset1/tempCliqueEdges.mtx", "r");
+    tempFile = fopen("datasets/tempCliqueEdges.mtx", "r");
     if (tempFile == NULL) {
-        printf("Failed to open the file.\n");
+        printf("Failed to open the file 265 .\n");
         exit(1);
     }
 
     // Read the header information
     char line[256];
     char ch;
-
+    
     while (true) {
         int u, v;
         fscanf(tempFile, "%d %d \n", &u, &v); 
@@ -468,7 +467,6 @@ void get_compression_ratio() {
             edges_in_clique += clique_u_size + clique_v_size;
     }
     total_edges = m_hat + edges_in_clique;
-    printf("471 %d, %d, %d, %d\n", initial_edges, total_edges, m_hat , edges_in_clique);
     compression_ratio = (float)initial_edges / (float)total_edges;
 }
 
@@ -506,7 +504,6 @@ void sequentialCPA() {
     long seconds = end.tv_sec - begin.tv_sec;
     long nanoseconds = end.tv_nsec - begin.tv_nsec;
     execution_time = (seconds + nanoseconds * 1e-9) * 1000;
-    printf("509 %d, %d, %d, %d\n", initial_edges, total_edges, m_hat , edges_in_clique);
     // get_compression_ratio();
 }
 
@@ -525,9 +522,9 @@ int main(int argc, char* argv[]) {
     experiment_no = atoi(argv[3]);
     delta =  atof(argv[4]);
     // const char* f_name = argv[5];
-    printf("%d, %d, %d, %f, %f, %f\n", graph_nodes, density, experiment_no, delta, compression_ratio, execution_time);
-    sprintf(f_name, "/ocean/projects/cis230093p/srabin/Graph_Compression/dataset1/bipartite_graph_%d_%d_%d.mtx", nodes, density, experiment_no);
-    const char *extension = strrchr(f_name, '.');
+    // sprintf(f_name, "/ocean/projects/cis230093p/srabin/Graph_Compression/dataset1/bipartite_graph_%d_%d_%d.mtx", nodes, density, experiment_no);
+    sprintf(f_name, "datasets/bipartite_graph_%d_%d_%d.mtx", nodes, density, experiment_no);
+    // const char *extension = strrchr(f_name, '.');
     
     
     // if (strcmp(extension, ".gz") == 0) {
@@ -543,29 +540,26 @@ int main(int argc, char* argv[]) {
 
     k_temp = 0;
     k_split = 0;
-    //sprintf(saveFilename, "datasets/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, experiment_no, int(delta);
-    sprintf(saveFilename, "/ocean/projects/cis230093p/achavan/Graph_Compression/dataset/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, experiment_no, (int)(delta*100));
-    printf("%d, %d, %d, %f, %f, %f, %s\n", graph_nodes, density, experiment_no, delta, compression_ratio, execution_time, saveFilename);
+    sprintf(saveFilename, "datasets/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, experiment_no, (int) delta);
+    // sprintf(saveFilename, "/ocean/projects/cis230093p/achavan/Graph_Compression/dataset/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, experiment_no, (int)(delta*100));
     multiplier = ceil(log10((double)graph_nodes));
     d_v = (int*)malloc(graph_nodes * sizeof(int));
     K = (int*)malloc((graph_nodes + 1) * sizeof(int));
     K_split = (int*)malloc((graph_nodes + 1) * sizeof(int));
     U_split = (int*)malloc((graph_nodes + 1) * sizeof(int));
-    printf("%d, %d, %d, %f, %f, %f\n", graph_nodes, density, experiment_no, delta, compression_ratio, execution_time);
+    // printf("%d, %d, %d, %f, %f, %f\n", graph_nodes, density, experiment_no, delta, compression_ratio, execution_time);
     saveFile = fopen(saveFilename, "w");
-    tempFile = fopen("/ocean/projects/cis230093p/achavan/Graph_Compression/dataset/tempCliqueEdges.mtx", "w");
+    // tempFile = fopen("/ocean/projects/cis230093p/achavan/Graph_Compression/dataset/tempCliqueEdges.mtx", "w");
+    tempFile = fopen("datasets/tempCliqueEdges.mtx", "w");
     temp_psi = (int*)malloc(graph_nodes * sizeof(int));
     temp_psi_idx = (int*)malloc(graph_nodes * sizeof(int));
     sequentialCPA();
     fprintf(tempFile, "%d", -1);
     fclose(tempFile);
     total_edges = m_hat + edges_in_clique;
-    printf("563 %d, %d, %d, %d\n", initial_edges, total_edges, m_hat , edges_in_clique);
     compression_ratio = (float)initial_edges / (float)total_edges;
     printf("%d, %d, %d, %f, %f, %f\n", graph_nodes, density, experiment_no, delta, compression_ratio, execution_time);
-
     save_graph_to_mtx();
-
     free(K);
 
     getDeAllocate(graph_nodes, adj_matrix);
@@ -574,6 +568,8 @@ int main(int argc, char* argv[]) {
     fclose(saveFile);
 
     free(d_v);
-    remove("/ocean/projects/cis230093p/achavan/Graph_Compression/dataset/tempCliqueEdges.mtx");
+    // remove("/ocean/projects/cis230093p/achavan/Graph_Compression/dataset/tempCliqueEdges.mtx");
+    
+    remove("datasets/tempCliqueEdges.mtx");
     return 0;
 }
