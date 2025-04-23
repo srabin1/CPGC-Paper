@@ -1,7 +1,7 @@
 
 
 
-# ReadMe: A Clique Partitioning-Based Algorithm for Graph Compression
+# ReadMe: Speeding-up Graph Algorithms via Clique Partitioning0
 
 ## The provided Git repository includes the following:
 
@@ -85,15 +85,15 @@
 - generate the fm, cpgc, dinics_bi, and dinics_tri execuitable files by following the steps procedure in the step 2 above
 - executing the `dinics_bi` program needs nodes, density and experiment number as input arguments in respective order. For example (```./dinics_bi 1024 80 1```)
 - similarly, executing the `dinics_tri` program needs nodes, density, experiment number, $\delta$, and algorithm (fm or cpgc) as input arguments in respective order
-  - for running `dinics_tri` on a compressed graph generated from cpgc use ```./dinics_tri 1024 80 1 0.9 cpgc```
-  - for running `dinics_tri` on a compressed graph generated from fm use ```./dinics_tri 1024 80 1 0.9 fm```
+  - for running `dinics_tri` on a restructured graph generated from cpgc use ```./dinics_tri 1024 80 1 0.9 cpgc```
+  - for running `dinics_tri` on a restructured graph generated from fm use ```./dinics_tri 1024 80 1 0.9 fm```
 
 7. The results for FM and CPGC stored as csv files with names: `fm_results.csv` and `cpgc_results.csv`, respectively. Both outputs includes the following information:  
 a) nodes, i.e., the number of vertices in the left partition of given graph,  
 b) density, i.e., the density of the given graph,  
 c) experimentNo, i.e., the experiment number,  
 d) delta, i.e., the constant $\delta$,  
-e) compression_ratio, i.e., compression ratio of FM or CPGC algorithm, and  
+e) edge reduction, i.e.,  edge reduction ratio of FM or CPGC algorithm, and  
 f) execution_time, i.e., the execution time of FM or CPGC algorithm.  
 
 8. The output for Dinitz’s algorithms stored as `bipartite_dinics_results.csv` and `tripartite_dinics_results.csv` includes the following information:  
@@ -101,15 +101,15 @@ a) nodes, i.e., the number of vertices in the left partition of given graph
 b) total_nodes, i.e., the total vertices in the graph, which includes the vertices in source, left partition, middle partition, right partition, and sink,  
 c) density, i.e., the density of the given graph,  
 d) experimentNo, i.e., the experiment number,  
-e) delta, i.e., the constant δ (only for dinics result on compressed graphs with dinics_tri execuitable file),  
+e) delta, i.e., the constant δ (only for dinics result on restructured graphs with dinics_tri execuitable file),  
 f) maximumFlow, i.e., maximum matching in a given graph,  
 g) run_time, i.e., execution time for the Dinitz's algorithm,  
 h) total_run_time, i.e., total execution time including reading the .mtx files.  
 
 
 ### Discussion and Limitations:
-- The obtained compression ratio depends on the number of nodes, density and $\delta$, which determines the size of the right partition of the $\delta$-clique.
-- The FM algorithm computes a large number to select the vertices for the right parition of a $\delta$-clique. This number increases with increasing nodes in each partition of the graph and thus exceeds the machines capaticy to store this number. Therefore, the FM program is limited to compress graphs with upto 128 vertices in each partition. 
+- The obtained edge reduction ratio depends on the number of nodes, density and $\delta$, which determines the size of the right partition of the $\delta$-clique.
+- The FM algorithm computes a large number to select the vertices for the right parition of a $\delta$-clique. This number increases with increasing nodes in each partition of the graph and thus exceeds the machines capaticy to store this number. Therefore, the FM program is limited to restructure graphs with upto 128 vertices in each partition. 
 
 
 
