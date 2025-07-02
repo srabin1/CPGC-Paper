@@ -1,8 +1,8 @@
-/*Implementation of cpgc*/
+/*Implementation of cpgr*/
 
 /* 
 
-Use:  gcc cpgc.c -lm -o cpgc -O1 -lrt -lz for compilation. Change the optimization level as required.
+Use:  gcc cpgr.c -lm -o cpgr -O1 -lrt -lz for compilation. Change the optimization level as required.
 
 */
 
@@ -62,17 +62,17 @@ int* K_split;     // Stores the right partition for each delta-clique
 int* U_split;      // Stores the left partition for each delta-clique
 int clique_u_size;     // Size of the left partition of the delta-clique
 int clique_v_size;      // Size of the right partition of the delta-clique
-int k_split;    // starting index of q in each CPGC iteration
-int k_temp;     // ending index of q in each CPGC iteration
+int k_split;    // starting index of q in each cpgr iteration
+int k_temp;     // ending index of q in each cpgr iteration
 int m_hat; // number of remaining edges
 int d_K;  // degree of set K in iteration k
-int Gamma;     // # of cliques extracted in each iteration of CPGC
+int Gamma;     // # of cliques extracted in each iteration of cpgr
 int k_hat;
 float delta;
 int density;
 int nodes;
 
-char cores[] = "cpgc";
+char cores[] = "cpgr";
 int multiplier;
 char saveFilename[150];
 int experiment_no;
@@ -114,7 +114,7 @@ void getDeAllocate(int n, int** arr) {
 
 
 
-/* Algo2: CPGC lines 5 and 13 */
+/* Algo2: cpgr lines 5 and 13 */
 void get_k_hat() {
     float de = (2 * pow((double)graph_nodes, 2)) / m_hat;
     float nu = delta * log2((double)graph_nodes);
@@ -300,7 +300,7 @@ void save_graph_to_mtx() {
 }
 
 
-/* Algo2: CPGC lines 1 and 11 */
+/* Algo2: cpgr lines 1 and 11 */
 void get_edges() {
     m_hat = 0;
     int i;
@@ -447,7 +447,7 @@ void get_U_with_k_hat(int k) {
     }
 }
 
-/* Algo2: CPGC lines 2 to 4*/
+/* Algo2: cpgr lines 2 to 4*/
 void get_d_v() {
     int j, i;
     for (j = 0; j < graph_nodes; j++) {
@@ -560,8 +560,8 @@ int main(int argc, char* argv[]) {
     k_temp = 0;
     k_split = 0;
     // Update the directory path as required
-    sprintf(saveFilename, "datasets/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, experiment_no, (int) delta);
-    // sprintf(saveFilename, "/ocean/projects/cis230093p/achavan/Graph_Compression/dataset/cpgc_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, experiment_no, (int)(delta*100));
+    sprintf(saveFilename, "datasets/cpgr_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, experiment_no, (int) delta);
+    // sprintf(saveFilename, "/ocean/projects/cis230093p/achavan/Graph_Compression/dataset/cpgr_tripartite_graph_%d_%d_%d_%d.mtx", nodes, density, experiment_no, (int)(delta*100));
     multiplier = ceil(log10((double)graph_nodes));
     d_v = (int*)malloc(graph_nodes * sizeof(int));
     K = (int*)malloc((graph_nodes + 1) * sizeof(int));
