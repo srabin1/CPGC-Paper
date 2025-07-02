@@ -1,7 +1,7 @@
 
 
 
-# ReadMe: Speeding-up Graph Algorithms via Clique Partitioning0
+# ReadMe: Speeding-up Graph Algorithms via Clique Partitioning
 
 ## The provided Git repository includes the following:
 
